@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>รายงานเคสปรึกษา</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Sarabun',sans-serif; background:#f2f4f7; color:#1a1a2e; font-size:16px; }
+.header { background:#fff; padding:16px 20px 14px; border-bottom:1px solid #eee; position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:12px; }
+.header-dot { width:10px; height:10px; border-radius:50%; background:#d4809a; flex-shrink:0; }
+.header h1 { font-size:16px; font-weight:600; color:#1a1a2e; }
+.header p { font-size:12px; color:#999; margin-top:1px; }
+.progress-wrap { background:#fff; padding:12px 20px; border-bottom:1px solid #f0f0f0; }
+.progress-bar { height:4px; background:#f0f0f0; border-radius:4px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(to right,#d4809a,#e8a0b4); border-radius:4px; transition:width 0.4s ease; width:20%; }
+.progress-text { font-size:11px; color:#bbb; margin-top:6px; text-align:right; }
+.steps-wrap { padding:16px; }
+.step { display:none; }
+.step.active { display:block; }
+.step-head { background:#fff; border-radius:14px; padding:16px 18px; margin-bottom:12px; border:1px solid #eee; display:flex; align-items:center; gap:12px; }
+.step-icon { width:40px; height:40px; border-radius:12px; background:#fdf0f4; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.step-head h2 { font-size:15px; font-weight:600; color:#1a1a2e; }
+.step-head p { font-size:12px; color:#aaa; margin-top:2px; }
+.card { background:#fff; border-radius:14px; border:1px solid #eee; overflow:hidden; margin-bottom:12px; }
+.field { padding:14px 16px; border-bottom:1px solid #f5f5f5; }
+.field:last-child { border-bottom:none; }
+.field label { display:block; font-size:12px; font-weight:600; color:#999; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.field label .req { color:#d4809a; margin-left:2px; }
+.field input, .field select, .field textarea { width:100%; font-size:15px; font-family:'Sarabun',sans-serif; color:#1a1a2e; background:transparent; border:none; outline:none; padding:0; line-height:1.5; }
+.field textarea { resize:none; min-height:80px; }
+.field select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0 center; padding-right:20px; }
+.field input::placeholder, .field textarea::placeholder { color:#ccc; }
+.price-grid { display:grid; grid-template-columns:1fr 1fr 1fr; }
+.price-grid .field { border-right:1px solid #f5f5f5; border-bottom:none; padding:14px 12px; }
+.price-grid .field:last-child { border-right:none; }
+.nav { padding:16px; display:flex; gap:10px; }
+.btn-next { flex:1; padding:15px; font-size:16px; font-weight:600; font-family:'Sarabun',sans-serif; background:#1a1a2e; color:#fff; border:none; border-radius:14px; cursor:pointer; }
+.btn-next:active { opacity:0.85; }
+.btn-back { padding:15px 20px; font-size:15px; font-family:'Sarabun',sans-serif; background:#fff; color:#1a1a2e; border:1px solid #eee; border-radius:14px; cursor:pointer; }
+.btn-submit { flex:1; padding:15px; font-size:16px; font-weight:600; font-family:'Sarabun',sans-serif; background:#d4809a; color:#fff; border:none; border-radius:14px; cursor:pointer; }
+.btn-submit:disabled { opacity:0.5; }
+.success { display:none; text-align:center; padding:60px 24px; }
+.success-icon { width:72px; height:72px; background:#f0fdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:32px; }
+.success h2 { font-size:20px; font-weight:600; margin-bottom:8px; }
+.success p { color:#aaa; font-size:14px; line-height:1.7; }
+.btn-new { margin-top:24px; padding:14px 32px; font-size:15px; font-family:'Sarabun',sans-serif; background:#fff; color:#1a1a2e; border:1px solid #eee; border-radius:14px; cursor:pointer; }
+.loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:999; align-items:center; justify-content:center; flex-direction:column; gap:12px; }
+.loading-overlay.show { display:flex; }
+.spinner { width:36px; height:36px; border:3px solid #f0f0f0; border-top-color:#d4809a; border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-overlay p { font-size:14px; color:#aaa; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>กำลังบันทึก...</p>
+</div>
+
+<div class="header">
+  <div class="header-dot"></div>
+  <div>
+    <h1>รายงานเคสปรึกษา</h1>
+    <p>กรอกหลังคนไข้ปรึกษาแล้วไม่จอง</p>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">ขั้นตอนที่ 1 จาก 5</div>
+</div>
+
+<div class="steps-wrap" id="stepsWrap">
+
+  <div class="step active" id="step1">
+    <div class="step-head">
+      <div class="step-icon">👤</div>
+      <div><h2>ข้อมูลคนไข้</h2><p>ชื่อ เบอร์โทร และที่มา</p></div>
+    </div>
+    <div class="card">
+      <div class="field"><label>ชื่อ-นามสกุล <span class="req">*</span></label><input id="f_name" type="text" placeholder="คุณ..."></div>
+      <div class="field"><label>อายุ</label><input id="f_age" type="text" placeholder="เช่น 28 ปี"></div>
+      <div class="field"><label>เบอร์โทร / Line ID <span class="req">*</span></label><input id="f_contact" type="tel" placeholder="0812345678"></div>
+      <div class="field"><label>รู้จักคลินิกจากไหน</label>
+        <select id="f_source">
+          <option value="">— เลือก —</option>
+          <option>TikTok</option><option>Instagram</option><option>Facebook</option>
+          <option>Google</option><option>บอกต่อ / คนรู้จัก</option><option>อื่นๆ</option>
+        </select>
+      </div>
+    </div>
+    <div class="nav"><button class="btn-next" onclick="nextStep(1)">ถัดไป →</button></div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="step-head">
+      <div class="step-icon">📋</div>
+      <div><h2>การปรึกษา</h2><p>หัตถการ วันที่ และหมอ</p></div>
+    </div>
+    <div class="card">
+      <div class="field"><label>หัตถการที่สนใจ <span class="req">*</span></label><input id="f_procedure" type="text" placeholder="เช่น แก้จมูก, ตาสองชั้น"></div>
+      <div class="field"><label>วันที่นัดปรึกษา</label><input id="f_date" type="date"></div>
+      <div class="field"><label>โค้ดคนไข้</label><input id="f_code" type="text" placeholder="เช่น 15000"></div>
+      <div class="field"><label>ที่ปรึกษาที่ดูแล <span class="req">*</span></label><input id="f_consultant" type="text" placeholder="ชื่อที่ปรึกษา"></div>
+      <div class="field"><label>หมอที่แนะนำ</label><input id="f_doctor" type="text" placeholder="ชื่อหมอ"></div>
+      <div class="field"><label>คลินิกที่เปรียบเทียบอยู่</label><input id="f_competitor" type="text" placeholder="ชื่อคลินิก หรือ -"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="prevStep(2)">←</button>
+      <button class="btn-next" onclick="nextStep(2)">ถัดไป →</button>
+    </div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="step-head">
+      <div class="step-icon">💬</div>
+      <div><h2>รายละเอียด</h2><p>สิ่งที่คุยกันในการปรึกษา</p></div>
+    </div>
+    <div class="card">
+      <div class="field"><label>จุดที่ตรงความคาดหวัง</label><textarea id="f_meet" placeholder="-"></textarea></div>
+      <div class="field"><label>จุดที่ไม่ตรงความคาดหวัง</label><textarea id="f_notmeet" placeholder="-"></textarea></div>
+      <div class="field"><label>สิ่งที่คนไข้อยากได้</label><textarea id="f_want" placeholder="-"></textarea></div>
+      <div class="field"><label>หมอแจ้งว่า</label><textarea id="f_doctorsay" placeholder="-"></textarea></div>
+      <div class="field"><label>ติดเรื่อง</label><textarea id="f_issue" placeholder="-"></textarea></div>
+      <div class="field"><label>แนวทางที่แนะนำไป</label><textarea id="f_suggest" placeholder="-"></textarea></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="prevStep(3)">←</button>
+      <button class="btn-next" onclick="nextStep(3)">ถัดไป →</button>
+    </div>
+  </div>
+
+  <div class="step" id="step4">
+    <div class="step-head">
+      <div class="step-icon">💰</div>
+      <div><h2>ราคา</h2><p>ราคาที่เสนอและงบคนไข้</p></div>
+    </div>
+    <div class="card">
+      <div class="price-grid">
+        <div class="field"><label>ราคาแรก</label><input id="f_price1" type="number" placeholder="บาท"></div>
+        <div class="field"><label>ราคาสุดท้าย</label><input id="f_price2" type="number" placeholder="บาท"></div>
+        <div class="field"><label>งบคนไข้</label><input id="f_budget" type="number" placeholder="บาท"></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="prevStep(4)">←</button>
+      <button class="btn-next" onclick="nextStep(4)">ถัดไป →</button>
+    </div>
+  </div>
+
+  <div class="step" id="step5">
+    <div class="step-head">
+      <div class="step-icon">📌</div>
+      <div><h2>ผลสรุป & Follow Up</h2><p>สรุปผลและนัดติดตาม</p></div>
+    </div>
+    <div class="card">
+      <div class="field"><label>สุดท้ายคนไข้แจ้งว่า</label><textarea id="f_ptsay" placeholder="-"></textarea></div>
+      <div class="field"><label>สุดท้ายแจ้งคนไข้ว่า</label><textarea id="f_wesay" placeholder="-"></textarea></div>
+      <div class="field"><label>วัน Follow Up ครั้งถัดไป <span class="req">*</span></label><input id="f_followdate" type="date"></div>
+      <div class="field"><label>ผู้รับผิดชอบ Follow Up</label><input id="f_followwho" type="text" placeholder="ชื่อ"></div>
+      <div class="field"><label>รายงานเคสกับ <span class="req">*</span></label><input id="f_report" type="text" placeholder="เช่น คุณแอ้นท์"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="prevStep(5)">←</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">บันทึกและส่งรายงาน</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="success" id="successScreen">
+  <div class="success-icon">✓</div>
+  <h2>บันทึกเรียบร้อยแล้ว</h2>
+  <p>ข้อมูลถูกส่งไปยัง Google Sheet แล้ว<br>ผู้บริหารสามารถดูได้ทันที</p>
+  <button class="btn-new" onclick="resetForm()">กรอกเคสใหม่</button>
+</div>
+
+<script>
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_UxFrCaOYKkum1X5SdFBiZl8IdxdYTbD8DT35Qq3po4X6qIFDaJg-fFIR2LW7o0gcZQ/exec';
+var currentStep = 1;
+var totalSteps = 5;
+
+function updateProgress() {
+  document.getElementById('progressFill').style.width = (currentStep/totalSteps*100)+'%';
+  document.getElementById('progressText').textContent = 'ขั้นตอนที่ '+currentStep+' จาก '+totalSteps;
+}
+
+function showStep(n) {
+  for(var i=1;i<=totalSteps;i++) document.getElementById('step'+i).classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  currentStep=n; updateProgress(); window.scrollTo(0,0);
+}
+
+function nextStep(from) {
+  if(from===1){ if(!g('f_name')||!g('f_contact')){ alert('กรุณากรอกชื่อและเบอร์โทรก่อนครับ'); return; } }
+  if(from===2){ if(!g('f_procedure')||!g('f_consultant')){ alert('กรุณากรอกหัตถการและชื่อที่ปรึกษาก่อนครับ'); return; } }
+  if(from<totalSteps) showStep(from+1);
+}
+
+function prevStep(from) { if(from>1) showStep(from-1); }
+
+function g(id) {
+  var el=document.getElementById(id);
+  if(!el) return '';
+  var v=el.value.trim();
+  if(el.type==='date'&&v){ var p=v.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+  return v;
+}
+
+function submitForm() {
+  if(!g('f_followdate')||!g('f_report')){ alert('กรุณากรอกวัน Follow Up และรายงานเคสกับก่อนครับ'); return; }
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('submitBtn').disabled=true;
+  var data={
+    timestamp:new Date().toLocaleString('th-TH'),
+    name:g('f_name'),age:g('f_age'),contact:g('f_contact'),
+    source:g('f_source'),procedure:g('f_procedure'),
+    consultDate:g('f_date'),code:g('f_code'),
+    consultant:g('f_consultant'),doctor:g('f_doctor'),
+    competitor:g('f_competitor'),metExpect:g('f_meet'),
+    notMetExpect:g('f_notmeet'),patientWant:g('f_want'),
+    doctorSaid:g('f_doctorsay'),issue:g('f_issue'),
+    suggestion:g('f_suggest'),price1:g('f_price1'),
+    price2:g('f_price2'),budget:g('f_budget'),
+    patientFinal:g('f_ptsay'),weFinal:g('f_wesay'),
+    followDate:g('f_followdate'),followWho:g('f_followwho'),
+    reportTo:g('f_report')
+  };
+  var params=Object.keys(data).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(data[k]||'-'); }).join('&');
+  var img=new Image();
+  img.onload=img.onerror=function(){
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('stepsWrap').style.display='none';
+    document.getElementById('progressWrap').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+  };
+  img.src=APPS_SCRIPT_URL+'?'+params+'&t='+Date.now();
+}
+
+function resetForm() {
+  document.querySelectorAll('input,textarea,select').forEach(function(el){ el.value=''; });
+  document.getElementById('stepsWrap').style.display='block';
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('successScreen').style.display='none';
+  document.getElementById('submitBtn').disabled=false;
+  showStep(1);
+}
+
+updateProgress();
+</script>
+</body>
+</html>
