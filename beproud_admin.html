@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บีพราวด์ — AI Admin Assistant</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun',sans-serif;background:#f0f4f6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px}
+  .app{width:100%;max-width:720px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.10);overflow:hidden}
+  .header{background:#055367;padding:16px 22px;display:flex;align-items:center;justify-content:space-between}
+  .header-left{display:flex;align-items:center;gap:10px}
+  .gold-dot{width:10px;height:10px;border-radius:50%;background:#C2822B;flex-shrink:0}
+  .header-title{font-size:16px;font-weight:600;color:#fff}
+  .header-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px}
+  .header-right{font-size:11px;color:rgba(255,255,255,0.4)}
+  .tab-bar{display:flex;background:#f8f9fa;border-bottom:1px solid #e9ecef}
+  .tab{padding:11px 18px;font-size:13px;cursor:pointer;color:#888;border-bottom:2px solid transparent;user-select:none;transition:all 0.15s;font-family:'Sarabun',sans-serif}
+  .tab:hover{color:#055367;background:#f0f4f6}
+  .tab.on{color:#055367;border-bottom-color:#055367;background:#fff;font-weight:600}
+  .badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;background:#055367;color:#fff;margin-left:5px;vertical-align:middle}
+  .pane{display:none;padding:18px;flex-direction:column;gap:14px}
+  .pane.on{display:flex}
+  .lbl{font-size:12px;color:#666;margin-bottom:4px;font-weight:500}
+  textarea,input[type=text],input[type=password]{width:100%;border:1px solid #dde1e5;border-radius:8px;padding:10px 12px;font-size:14px;font-family:'Sarabun',sans-serif;color:#222;background:#fff;transition:border 0.15s}
+  textarea{resize:vertical;line-height:1.6}
+  textarea:focus,input:focus{outline:none;border-color:#055367;box-shadow:0 0 0 3px rgba(5,83,103,0.08)}
+  .row{display:flex;gap:10px;align-items:flex-end}
+  select{height:40px;border:1px solid #dde1e5;border-radius:8px;padding:0 10px;font-size:14px;font-family:'Sarabun',sans-serif;color:#222;background:#fff;flex:1;transition:border 0.15s}
+  select:focus{outline:none;border-color:#055367}
+  .btn{height:40px;padding:0 18px;border-radius:8px;border:none;background:#055367;color:#fff;font-size:14px;font-family:'Sarabun',sans-serif;cursor:pointer;white-space:nowrap;font-weight:600;transition:all 0.15s}
+  .btn:hover{background:#044556}
+  .btn:disabled{opacity:0.45;cursor:default}
+  .btn:active{transform:scale(0.98)}
+  .btn-sm{height:32px;padding:0 14px;font-size:12px}
+  .btn-out{background:transparent;color:#055367;border:1px solid #055367}
+  .btn-out:hover{background:#f0f4f6}
+  .btn-gold{background:#C2822B;border:none}
+  .btn-gold:hover{background:#a86d22}
+  .result-box{border:1px solid #e9ecef;border-radius:12px;padding:14px;background:#f8f9fa;min-height:80px}
+  .result-hd{font-size:11px;color:#aaa;display:flex;justify-content:space-between;margin-bottom:8px;align-items:center}
+  .result-text{font-size:14px;color:#222;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+  .dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:#055367;animation:b 1.2s infinite;margin:0 2px}
+  .dots span:nth-child(2){animation-delay:.2s}
+  .dots span:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+  .copy-btn{font-size:11px;padding:3px 10px;height:24px;border-radius:6px;border:1px solid #dde1e5;background:#fff;color:#666;cursor:pointer;font-family:'Sarabun',sans-serif}
+  .copy-btn:hover{background:#f0f4f6}
+  .kb-item{background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:10px 13px;margin-bottom:8px}
+  .kb-hd{display:flex;justify-content:space-between;align-items:center}
+  .kb-title{font-weight:600;font-size:13px;color:#222}
+  .kb-body{font-size:12px;color:#666;margin-top:4px;line-height:1.6}
+  .del{font-size:11px;color:#c0392b;cursor:pointer;background:none;border:none;font-family:'Sarabun',sans-serif}
+  .del:hover{text-decoration:underline}
+  .sep{border:none;border-top:1px solid #e9ecef;margin:6px 0}
+  .empty{font-size:13px;color:#bbb;text-align:center;padding:20px 0}
+  .api-box{background:#f8f9fa;border:1px solid #e9ecef;border-radius:12px;padding:16px}
+  .api-status{display:flex;align-items:center;gap:7px;font-size:12px;margin-top:8px}
+  .dot-ok{width:7px;height:7px;border-radius:50%;background:#27ae60;flex-shrink:0}
+  .dot-no{width:7px;height:7px;border-radius:50%;background:#e74c3c;flex-shrink:0}
+  .info-box{background:#e8f4f8;border:1px solid #b8dce8;border-radius:8px;padding:10px 13px;font-size:12px;color:#055367;line-height:1.7}
+  .warn{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 13px;font-size:13px;color:#856404;line-height:1.6}
+  .hist-item{border:1px solid #e9ecef;border-radius:8px;padding:10px 13px;background:#fff;margin-bottom:8px}
+  .hist-q{font-size:12px;color:#888;margin-bottom:3px}
+  .hist-a{font-size:13px;color:#222;line-height:1.6}
+  .hist-meta{font-size:11px;color:#bbb;margin-top:4px}
+  .action-row{display:flex;gap:8px;justify-content:flex-end}
+  a{color:#055367}
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="gold-dot"></div>
+      <div>
+        <div class="header-title">บีพราวด์ — AI Admin Assistant</div>
+        <div class="header-sub">ช่วย draft คำตอบสำหรับแอดมินเพจ</div>
+      </div>
+    </div>
+    <div class="header-right">BeProud Clinic</div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab on" onclick="sw('draft')">Draft คำตอบ</div>
+    <div class="tab" onclick="sw('kb')">Knowledge Base <span class="badge" id="kbc">0</span></div>
+    <div class="tab" onclick="sw('settings')">ตั้งค่า API</div>
+    <div class="tab" onclick="sw('history')">ประวัติ</div>
+  </div>
+
+  <!-- DRAFT -->
+  <div class="pane on" id="pane-draft">
+    <div id="no-key-warn" class="warn" style="display:none">⚠️ ยังไม่ได้ใส่ API Key — ไปที่ tab "ตั้งค่า API" ก่อนนะคะ</div>
+    <div>
+      <div class="lbl">ข้อความลูกค้า (วางมาได้เลย)</div>
+      <textarea id="cmsg" rows="4" placeholder="วางข้อความหรือคำถามของลูกค้าที่นี่..."></textarea>
+    </div>
+    <div>
+      <div class="lbl">บริบทเพิ่มเติม (ไม่บังคับ)</div>
+      <textarea id="ectx" rows="2" placeholder="เช่น ลูกค้าสนใจปากบน, ถามเรื่องราคา..."></textarea>
+    </div>
+    <div class="row">
+      <select id="tone">
+        <option value="friendly">โทน: เป็นกันเอง อบอุ่น</option>
+        <option value="professional">โทน: มืออาชีพ สุภาพ</option>
+        <option value="concise">โทน: กระชับ ตรงประเด็น</option>
+      </select>
+      <button class="btn" id="gen-btn" onclick="gen()">✦ Draft คำตอบ</button>
+    </div>
+    <div class="result-box">
+      <div class="result-hd">
+        <span id="rst-status">คำตอบจะปรากฏที่นี่</span>
+        <button class="copy-btn" id="copy-btn" onclick="copyR()" style="display:none">คัดลอก</button>
+      </div>
+      <div class="result-text" id="rst-text"></div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-sm btn-out" onclick="gen()" id="regen-btn" style="display:none">↺ ลองใหม่</button>
+      <button class="btn btn-sm btn-gold" onclick="savH()" id="save-btn" style="display:none">บันทึก</button>
+    </div>
+  </div>
+
+  <!-- KB -->
+  <div class="pane" id="pane-kb">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:600;color:#222">Knowledge Base</div>
+      <div style="font-size:12px;color:#aaa">AI ใช้ข้อมูลนี้ตอบลูกค้า</div>
+    </div>
+    <div id="kb-list"></div>
+    <hr class="sep">
+    <div class="lbl">เพิ่มข้อมูลใหม่</div>
+    <input type="text" id="kb-t" placeholder="หัวข้อ เช่น ราคาปากกระจับ, ข้อมูลหมออาร์ม...">
+    <textarea id="kb-b" rows="3" placeholder="รายละเอียด..."></textarea>
+    <button class="btn btn-sm" onclick="addKb()" style="align-self:flex-end">+ เพิ่มข้อมูล</button>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="pane" id="pane-settings">
+    <div class="api-box">
+      <div class="lbl">Gemini API Key</div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <input type="password" id="api-input" placeholder="AIza..." style="flex:1">
+        <button class="btn btn-sm" onclick="saveKey()">บันทึก</button>
+      </div>
+      <div class="api-status" id="api-status">
+        <div class="dot-no"></div>
+        <span style="color:#888">ยังไม่ได้ใส่ API Key</span>
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>วิธีหา Gemini API Key</strong><br>
+      1. เปิด <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a><br>
+      2. Login ด้วย Google account ที่เป็น PRO<br>
+      3. กด "Create API key" มุมบนขวา<br>
+      4. คัดลอก key มาวางด้านบน<br><br>
+      <strong>ค่าใช้จ่าย</strong><br>
+      ใช้ได้ฟรีตาม Google AI Pro ที่สมัครไว้แล้ว
+    </div>
+    <div style="font-size:12px;color:#aaa;line-height:1.7">
+      🔒 API Key เก็บใน browser นี้เท่านั้น ส่งตรงไป Google เพื่อเรียกใช้ Gemini AI เท่านั้น
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="pane" id="pane-history">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:600;color:#222">ประวัติ Draft</div>
+      <button class="btn btn-sm btn-out" onclick="clrH()">ล้างทั้งหมด</button>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_KB=[
+  {id:1,title:"ข้อมูลคลินิก",body:"บีพราวด์คลินิก (BeProud Aesthetic Clinic) คลินิคศัลยกรรมความงามในไทย บริการโดยทีมแพทย์ผู้เชี่ยวชาญ ดูแลลูกค้าดุจคนในครอบครัว"},
+  {id:2,title:"บริการหลัก",body:"ปากกระจับ (Lip Surgery), ตาสองชั้น (Double Eyelid), เสริมจมูก (Rhinoplasty), เสริมคาง (Chin Augmentation), ฟิลเลอร์ (Filler), โบท็อก (Botox)"},
+  {id:3,title:"แพทย์ประจำคลินิก",body:"หมออาร์ม: เชี่ยวชาญปากกระจับ เทคนิค InfinityStitch บวมช้ำน้อย ออกแบบทรงปากเฉพาะบุคคล วาดปากให้ดูก่อนผ่าตัด | หมอขิม: ปากกระจับทรงชัด ทรงหวาน ลิฟกราฟ ยกมุมปาก | หมอหลิง: ผู้เชี่ยวชาญศัลยกรรมรอบดวงตา | หมอดา: ศัลยกรรมใบหน้า แผลเล็ก ฟื้นตัวเร็ว | หมอไบรท์: ศัลยกรรมตา"},
+  {id:4,title:"ราคาปากกระจับ",body:"ปากบน (หมออาร์ม): 55,000 บาท | ทำปากบน+ล่างพร้อมกันลด 10,000 เหลือ 100,000 บาท | ราคามาตรฐาน ไม่มีโปรโมชั่น"},
+  {id:5,title:"จุดเด่น USP",body:"ออกแบบทรงปากเฉพาะบุคคล ไม่มีสูตรสำเร็จ | วาดปากให้ดูก่อนตัดสินใจ | เคสแก้ปากจากที่อื่น จบที่บีพราวด์ | บวมช้ำน้อย พักฟื้นไว | ดูแลก่อน-หลังด้วยใจ"},
+  {id:6,title:"Pain Point ลูกค้า",body:"ปากหนา ปากห้อย ไม่กล้ายิ้ม | ทาลิปแล้วไม่สวย ปากไม่เป็นทรง | เคยฟิลเลอร์แล้วไม่พอใจ | แก้มาจากที่อื่นไม่จบ"},
+  {id:7,title:"สคริปต์รับมือลูกค้าบ่นแพง",body:"เข้าใจเลยค่ะ ราคาเป็นเรื่องสำคัญมากในการตัดสินใจ แต่ที่บีพราวด์ราคานี้รวมทุกอย่างแล้วค่ะ ทั้งการออกแบบทรงปากเฉพาะบุคคล วาดให้ดูก่อนผ่าตัด และดูแลหลังทำจนครบ ไม่มีค่าใช้จ่ายแอบแฝง | หลายคนที่เคยทำที่อื่นราคาถูกกว่า แต่สุดท้ายต้องมาแก้ที่บีพราวด์อีกรอบ ซึ่งเสียทั้งเงินและเวลามากกว่าเดิม | ปากเราทำแค่ครั้งเดียว เลือกให้ถูกตั้งแต่แรกดีกว่าค่ะ"},
+  {id:8,title:"สคริปต์โน้มน้าวให้จอง",body:"ชวนส่งรูปให้หมอดูก่อนได้เลยค่ะ ไม่มีค่าใช้จ่าย หมอจะประเมินเบื้องต้นให้ว่าเคสเราเหมาะกับแนวทางไหน | นัดปรึกษาฟรีได้เลยค่ะ ไม่ต้องตัดสินใจทำเลย แค่มาคุยกับหมอก่อน | มีคิวว่างช่วงนี้ค่ะ ถ้าสนใจทักมาเลยนะคะ"},
+  {id:9,title:"สคริปต์สร้างความมั่นใจ",body:"หมออาร์มเชี่ยวชาญปากกระจับโดยเฉพาะ ออกแบบทรงปากเฉพาะบุคคล ไม่มีสูตรสำเร็จ | วาดปากให้ดูก่อนผ่าตัดทุกเคส เห็นผลลัพธ์ก่อนตัดสินใจ | เทคนิค InfinityStitch บวมช้ำน้อย พักฟื้นไว กลับมาใช้ชีวิตได้เร็ว | เคสแก้ปากจากที่อื่นที่บีพราวด์รับแก้จนจบมาแล้วนับไม่ถ้วน"},
+];
+
+let kb=JSON.parse(localStorage.getItem('bp_kb3')||'null')||DEFAULT_KB.map(x=>({...x}));
+let hist=JSON.parse(localStorage.getItem('bp_h3')||'[]');
+let apiKey=localStorage.getItem('bp_key3')||'';
+let lastR='',lastQ='';
+
+function svKb(){localStorage.setItem('bp_kb3',JSON.stringify(kb));document.getElementById('kbc').textContent=kb.length;}
+function svH(){localStorage.setItem('bp_h3',JSON.stringify(hist));}
+
+function sw(t){
+  ['draft','kb','settings','history'].forEach((n,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('on',n===t);
+    document.getElementById('pane-'+n).classList.toggle('on',n===t);
+  });
+  if(t==='kb')rnKb();
+  if(t==='history')rnH();
+  if(t==='settings'){if(apiKey)document.getElementById('api-input').value=apiKey;rnKeyStatus();}
+  if(t==='draft')document.getElementById('no-key-warn').style.display=apiKey?'none':'';
+}
+
+function rnKeyStatus(){
+  const el=document.getElementById('api-status');
+  if(apiKey){
+    el.innerHTML='<div class="dot-ok"></div><span style="color:#27ae60">API Key บันทึกแล้ว ('+apiKey.substring(0,14)+'...)</span>';
+  }else{
+    el.innerHTML='<div class="dot-no"></div><span style="color:#888">ยังไม่ได้ใส่ API Key</span>';
+  }
+}
+
+function saveKey(){
+  const v=document.getElementById('api-input').value.trim();
+  if(!v){alert('กรุณาใส่ API Key ก่อนค่ะ');return;}
+  apiKey=v;
+  localStorage.setItem('bp_key3',apiKey);
+  rnKeyStatus();
+  document.getElementById('no-key-warn').style.display='none';
+  const btn=document.querySelector('#pane-settings .btn-sm');
+  btn.textContent='บันทึกแล้ว ✓';
+  setTimeout(()=>btn.textContent='บันทึก',1500);
+}
+
+function rnKb(){
+  const el=document.getElementById('kb-list');
+  if(!kb.length){el.innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';return;}
+  el.innerHTML=kb.map(k=>`<div class="kb-item"><div class="kb-hd"><span class="kb-title">${k.title}</span><button class="del" onclick="delKb(${k.id})">ลบ</button></div><div class="kb-body">${k.body}</div></div>`).join('');
+}
+
+function addKb(){
+  const t=document.getElementById('kb-t').value.trim();
+  const b=document.getElementById('kb-b').value.trim();
+  if(!t||!b){alert('กรุณาใส่หัวข้อและรายละเอียด');return;}
+  kb.push({id:Date.now(),title:t,body:b});
+  svKb();rnKb();
+  document.getElementById('kb-t').value='';
+  document.getElementById('kb-b').value='';
+}
+
+function delKb(id){
+  if(!confirm('ลบข้อมูลนี้?'))return;
+  kb=kb.filter(k=>k.id!==id);svKb();rnKb();
+}
+
+function rnH(){
+  const el=document.getElementById('hist-list');
+  if(!hist.length){el.innerHTML='<div class="empty">ยังไม่มีประวัติ</div>';return;}
+  el.innerHTML=[...hist].reverse().map(h=>`<div class="hist-item"><div class="hist-q">ลูกค้า: ${h.q.substring(0,80)}${h.q.length>80?'...':''}</div><div class="hist-a">${h.a.substring(0,200)}${h.a.length>200?'...':''}</div><div class="hist-meta">${h.time}</div></div>`).join('');
+}
+
+function clrH(){
+  if(!confirm('ล้างประวัติทั้งหมด?'))return;
+  hist=[];svH();rnH();
+}
+
+function sysPrompt(){
+  const kbTxt=kb.map(k=>`[${k.title}]\n${k.body}`).join('\n\n');
+  return `คุณคือ "น้องบีพราวด์" ที่ปรึกษาความงามและนักขายมืออาชีพของบีพราวด์คลินิก (BeProud Aesthetic Clinic) มีหน้าที่ draft คำตอบให้แอดมินเพจใช้ตอบลูกค้าทาง Messenger/Line OA\n\nKnowledge Base:\n${kbTxt}\n\nสไตล์: อบอุ่น เป็นกันเอง เหมือนพี่สาวที่เชี่ยวชาญเรื่องความงาม ไม่ดูเป็น AI ไม่โฆษณาเกินจริง ใช้ภาษาไทยธรรมชาติ\n\nให้ draft คำตอบมา 3 แนวทางเสมอ แต่ละแนวทางต้องทำครบ 4 ขั้น:\n1. รับรู้ความรู้สึก — เข้าใจและไม่ปฏิเสธความกังวลของลูกค้า\n2. โน้มน้าวด้วย USP — ดึง USP ที่ตรงกับปัญหาลูกค้ามาอธิบายว่าทำไมบีพราวด์ถึงคุ้มค่า\n3. สร้างความมั่นใจ — อ้างอิงจุดเด่นหมอ เทคนิค หรือผลลัพธ์จริง\n4. Call to Action — ชวนทำขั้นตอนต่อไปเสมอ เช่น ส่งรูปให้หมอดู / นัดปรึกษาฟรี / ดูรีวิวก่อน\n\nformat การตอบ:\n🔵 แนวทางที่ 1 — [ชื่อแนวทาง เช่น เน้นคุณค่า / ความคุ้มค่า]\n[draft ข้อความ]\n\n🟡 แนวทางที่ 2 — [ชื่อแนวทาง เช่น เน้นความเชี่ยวชาญของหมอ]\n[draft ข้อความ]\n\n🟢 แนวทางที่ 3 — [ชื่อแนวทาง เช่น เน้นอารมณ์ / เข้าใจความรู้สึก]\n[draft ข้อความ]\n\nใช้ข้อมูลจาก Knowledge Base เท่านั้น ไม่คาดเดาข้อมูลที่ไม่มี`;
+}
+
+function toneNote(t){
+  if(t==='professional')return 'ใช้ภาษาสุภาพ มืออาชีพ ใช้คำว่า ครับ/ค่ะ';
+  if(t==='concise')return 'ตอบสั้นกระชับ ตรงประเด็น ไม่เยิ่นเย้อ';
+  return 'โทนเป็นกันเอง อบอุ่น ใช้คำว่า ค่ะ/นะคะ เหมือนพูดกับเพื่อน';
+}
+
+async function gen(){
+  if(!apiKey){alert('กรุณาใส่ API Key ที่ tab "ตั้งค่า API" ก่อนค่ะ');sw('settings');return;}
+  const msg=document.getElementById('cmsg').value.trim();
+  if(!msg){alert('กรุณาใส่ข้อความลูกค้าก่อนค่ะ');return;}
+  const extra=document.getElementById('ectx').value.trim();
+  const tone=document.getElementById('tone').value;
+  const btn=document.getElementById('gen-btn');
+  const rt=document.getElementById('rst-text');
+  const rs=document.getElementById('rst-status');
+  btn.disabled=true;btn.textContent='กำลัง draft...';
+  rs.innerHTML='<span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#888"><span class="dots"><span></span><span></span><span></span></span> AI กำลังคิดคำตอบ...</span>';
+  rt.textContent='';
+  document.getElementById('copy-btn').style.display='none';
+  document.getElementById('regen-btn').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  lastQ=msg;
+  const userMsg=`ข้อความลูกค้า:\n"${msg}"${extra?'\n\nบริบท: '+extra:''}\n\nโทน: ${toneNote(tone)}\n\nDraft คำตอบภาษาไทย:`;
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system_instruction:{parts:[{text:sysPrompt()}]},
+        contents:[{role:'user',parts:[{text:userMsg}]}],
+        generationConfig:{maxOutputTokens:800}
+      })
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const ans=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    if(!ans)throw new Error('ไม่ได้รับคำตอบจาก Gemini');
+    lastR=ans;
+    rt.textContent=ans;
+    rs.textContent='Draft จาก Gemini 2.5 Flash ✓';
+    document.getElementById('copy-btn').style.display='';
+    document.getElementById('regen-btn').style.display='';
+    document.getElementById('save-btn').style.display='';
+  }catch(e){
+    rs.textContent='เกิดข้อผิดพลาด';
+    rt.textContent='❌ '+e.message;
+  }
+  btn.disabled=false;btn.textContent='✦ Draft คำตอบ';
+}
+
+function copyR(){
+  navigator.clipboard.writeText(lastR).then(()=>{
+    const b=document.getElementById('copy-btn');
+    b.textContent='คัดลอกแล้ว ✓';
+    setTimeout(()=>b.textContent='คัดลอก',1500);
+  });
+}
+
+function savH(){
+  const now=new Date();
+  hist.push({
+    q:lastQ,a:lastR,
+    time:now.toLocaleDateString('th-TH')+' '+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
+  });
+  if(hist.length>100)hist.shift();
+  svH();
+  const b=document.getElementById('save-btn');
+  b.textContent='บันทึกแล้ว ✓';
+  setTimeout(()=>b.textContent='บันทึก',1500);
+}
+
+svKb();
+if(apiKey)rnKeyStatus();
+document.getElementById('no-key-warn').style.display=apiKey?'none':'';
+</script>
+</body>
+</html>
