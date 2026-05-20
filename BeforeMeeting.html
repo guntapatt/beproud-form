@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Meeting Form — บีพราวด์ คลินิก</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:    #055367;
+    --teal2:   #1F7A95;
+    --gold:    #C2822B;
+    --gold2:   #E8A84A;
+    --cream:   #F4F4E8;
+    --cream2:  #EEEEDD;
+    --white:   #FFFFFF;
+    --gray1:   #F7F8FA;
+    --gray2:   #E8ECF0;
+    --gray3:   #B0B8C4;
+    --text:    #1A2530;
+    --text2:   #4A5568;
+    --success: #1A7A4A;
+    --error:   #C0392B;
+    --radius:  12px;
+    --shadow:  0 4px 24px rgba(5,83,103,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--teal);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(5,83,103,0.25);
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-badge {
+    width: 42px; height: 42px;
+    background: var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(194,130,43,0.4);
+  }
+  .header-text h1 {
+    font-size: 16px; font-weight: 700;
+    color: var(--white); letter-spacing: 0.01em;
+  }
+  .header-text p {
+    font-size: 12px; color: rgba(255,255,255,0.65);
+    margin-top: 2px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--teal);
+    padding: 0 20px 14px;
+  }
+  .progress-inner { max-width: 720px; margin: 0 auto; }
+  .progress-track {
+    height: 4px; background: rgba(255,255,255,0.2);
+    border-radius: 4px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--gold2);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 11px; color: rgba(255,255,255,0.55);
+    margin-top: 6px; text-align: right;
+  }
+
+  /* ── MAIN CONTAINER ── */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* ── STEP INDICATOR ── */
+  .step-nav {
+    display: flex; gap: 8px; margin-bottom: 24px;
+    overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .step-nav::-webkit-scrollbar { display: none; }
+  .step-dot {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    white-space: nowrap; cursor: pointer;
+    border: none; background: var(--gray2); color: var(--gray3);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: var(--teal); color: var(--white);
+    box-shadow: 0 2px 10px rgba(5,83,103,0.3);
+  }
+  .step-dot.done {
+    background: var(--success); color: var(--white);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: slideUp 0.35s ease;
+  }
+  @keyframes slideUp {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .card-header {
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--gray2);
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    background: var(--teal); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .card-header h2 {
+    font-size: 15px; font-weight: 700; color: var(--teal);
+  }
+  .card-header p {
+    font-size: 12px; color: var(--text2); margin-top: 2px;
+  }
+  .card-body { padding: 20px; }
+
+  /* ── FORM ELEMENTS ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 13px; font-weight: 600; color: var(--teal);
+  }
+  .required::after { content: " *"; color: var(--gold); }
+
+  input[type="text"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray2);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal2);
+    box-shadow: 0 0 0 3px rgba(31,122,149,0.12);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23055367' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  /* ── EXAMPLE BOX ── */
+  .example-box {
+    background: #FFFDF5;
+    border: 1px solid var(--cream2);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .example-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--gold); text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+  .example-box ul {
+    list-style: none; padding: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .example-box li {
+    font-size: 12px; color: var(--text2);
+    padding-left: 14px; position: relative;
+  }
+  .example-box li::before {
+    content: "·"; position: absolute; left: 4px;
+    color: var(--gold);
+  }
+
+  /* ── STATUS CHECK ── */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .status-option { display: none; }
+  .status-label {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    padding: 12px 8px;
+    border: 2px solid var(--gray2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px; font-weight: 600;
+    text-align: center;
+    color: var(--text2);
+  }
+  .status-label .status-emoji { font-size: 20px; }
+  .status-option:checked + .status-label {
+    border-color: var(--teal);
+    background: rgba(5,83,103,0.06);
+    color: var(--teal);
+    box-shadow: 0 2px 8px rgba(5,83,103,0.15);
+  }
+
+  /* ── CROSS-TEAM TABLE ── */
+  .cross-table { width: 100%; border-collapse: collapse; }
+  .cross-table th {
+    background: var(--teal);
+    color: var(--white);
+    font-size: 12px; font-weight: 600;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .cross-table th:first-child { border-radius: 8px 0 0 0; }
+  .cross-table th:last-child { border-radius: 0 8px 0 0; }
+  .cross-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--gray2);
+    vertical-align: top;
+  }
+  .cross-table tr:nth-child(even) td { background: var(--gray1); }
+  .cross-table select,
+  .cross-table input {
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .cross-table select { padding-right: 28px; }
+
+  /* ── ACTION TABLE ── */
+  .action-rows { display: flex; flex-direction: column; gap: 10px; }
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 130px;
+    gap: 8px;
+    align-items: start;
+  }
+  .action-row input { font-size: 13px; }
+  .action-num {
+    font-size: 11px; font-weight: 700;
+    color: var(--teal); background: var(--gray1);
+    border-radius: 6px; padding: 2px 8px;
+    margin-bottom: 6px; display: inline-block;
+  }
+
+  /* ── EXAMPLE ACTION ── */
+  .action-example {
+    background: #FFFDF5;
+    border: 1px dashed var(--gold2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .action-example-label {
+    font-size: 10px; color: var(--gold);
+    font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+  .action-example-row {
+    display: grid; grid-template-columns: 1fr 110px;
+    gap: 8px; font-size: 12px; color: var(--text2);
+    padding: 4px 0; border-bottom: 1px solid var(--cream2);
+  }
+  .action-example-row:last-child { border-bottom: none; }
+  .action-deadline {
+    color: var(--gold); font-weight: 600; font-size: 11px;
+    text-align: right;
+  }
+
+  /* ── STEPS ── */
+  .step-page { display: none; }
+  .step-page.active { display: block; }
+
+  /* ── NAV BUTTONS ── */
+  .nav-buttons {
+    display: flex; gap: 10px; justify-content: space-between;
+    margin-top: 24px;
+  }
+  .btn {
+    padding: 13px 28px;
+    border-radius: 10px; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-back {
+    background: var(--gray2); color: var(--text2);
+    flex: 0 0 auto;
+  }
+  .btn-back:hover { background: var(--gray3); color: var(--white); }
+  .btn-next {
+    background: var(--teal); color: var(--white);
+    flex: 1; justify-content: center;
+    box-shadow: 0 4px 14px rgba(5,83,103,0.3);
+  }
+  .btn-next:hover { background: var(--teal2); transform: translateY(-1px); }
+  .btn-submit {
+    background: var(--gold); color: var(--white);
+    flex: 1; justify-content: center;
+    box-shadow: 0 4px 14px rgba(194,130,43,0.35);
+  }
+  .btn-submit:hover { background: var(--gold2); transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* ── SUCCESS SCREEN ── */
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: var(--success);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(26,122,74,0.3);
+  }
+  #success-screen h2 {
+    font-size: 22px; font-weight: 700;
+    color: var(--teal); margin-bottom: 8px;
+  }
+  #success-screen p {
+    font-size: 14px; color: var(--text2); line-height: 1.7;
+  }
+  .success-detail {
+    background: var(--white); border-radius: var(--radius);
+    padding: 20px; margin: 24px 0;
+    box-shadow: var(--shadow); text-align: left;
+  }
+  .success-detail h3 {
+    font-size: 13px; font-weight: 700;
+    color: var(--teal); margin-bottom: 12px;
+  }
+  .success-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid var(--gray2);
+    font-size: 13px;
+  }
+  .success-row:last-child { border-bottom: none; }
+  .success-row span:first-child { color: var(--text2); }
+  .success-row span:last-child { font-weight: 600; color: var(--teal); }
+
+  /* ── LOADING OVERLAY ── */
+  #loading {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(5,83,103,0.7);
+    z-index: 999;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+  }
+  #loading.show { display: flex; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { color: white; font-size: 14px; font-weight: 600; }
+
+  /* ── MISC ── */
+  .hint { font-size: 11px; color: var(--gray3); margin-top: 3px; }
+  .section-intro {
+    font-size: 13px; color: var(--text2); line-height: 1.6;
+    margin-bottom: 16px; padding: 12px 14px;
+    background: var(--gray1); border-radius: 8px;
+  }
+  .badge {
+    display: inline-block; padding: 2px 8px;
+    background: rgba(194,130,43,0.12);
+    color: var(--gold); border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+  }
+  .divider {
+    height: 1px; background: var(--gray2);
+    margin: 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-badge">💎</div>
+    <div class="header-text">
+      <h1>บีพราวด์ คลินิก</h1>
+      <p>Pre-Meeting Form — ฮกลกซิ่ว Weekly</p>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">ขั้นตอน 1 จาก 6</div>
+    </div>
+  </div>
+</header>
+
+<div class="container" id="mainForm">
+
+  <!-- STEP NAV -->
+  <div class="step-nav" id="stepNav">
+    <button class="step-dot active" onclick="goToStep(0)">1 · ข้อมูลทีม</button>
+    <button class="step-dot" onclick="goToStep(1)">2 · ผลงาน</button>
+    <button class="step-dot" onclick="goToStep(2)">3 · ติดตามงาน</button>
+    <button class="step-dot" onclick="goToStep(3)">4 · ปัญหา</button>
+    <button class="step-dot" onclick="goToStep(4)">5 · ขอความช่วยเหลือ</button>
+    <button class="step-dot" onclick="goToStep(5)">6 · Action + แจ้งประชุม</button>
+  </div>
+
+  <!-- ════ STEP 1: ข้อมูลทีม ════ -->
+  <div class="step-page active" id="step-0">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <h2>ข้อมูลผู้กรอก</h2>
+          <p>กรอกข้อมูลก่อนเริ่มต้น</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="required">ชื่อ-นามสกุล</label>
+            <input type="text" id="name" placeholder="เช่น สมใจ ใจดี">
+          </div>
+          <div class="form-group">
+            <label class="required">แผนก / ทีม</label>
+            <select id="department">
+              <option value="">— เลือกแผนก —</option>
+              <option>ธุรการ</option>
+              <option>แอดมินเพจ</option>
+              <option>ที่ปรึกษาศัลยกรรม</option>
+              <option>ผู้ช่วยแพทย์</option>
+              <option>TikTok Content Creator</option>
+              <option>กราฟิก</option>
+              <option>การตลาด</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="required">วันที่ประชุม</label>
+            <input type="date" id="meetingDate">
+          </div>
+          <div class="form-group">
+            <label>เวลาประชุม</label>
+            <input type="text" id="meetingTime" placeholder="เช่น 10:00 น.">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-next" onclick="nextStep()">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- ════ STEP 2: ผลงาน ════ -->
+  <div class="step-page" id="step-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🏆</div>
+        <div>
+          <h2>ผลงานสัปดาห์นี้</h2>
+          <p>สิ่งที่ทีมทำได้ดี 1-3 ข้อ</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="example-box">
+          <div class="example-label">💡 ตัวอย่างตามแผนก</div>
+          <ul>
+            <li>ธุรการ: ส่ง SOP ฉบับแก้ไขเรียบร้อย / โทรตามเคสครบ 98 สาย</li>
+            <li>แอดมินเพจ: ยอดจอง 42 ยอดช่วงท้ายเดือน / แชทใหม่ 348 แชท</li>
+            <li>ที่ปรึกษาฯ: Upsell สกินครบ 100% / รีวิว Google Natural 5 ราย</li>
+            <li>ผู้ช่วยแพทย์: น้องใหม่ตัดไหมเองได้ / Flow คิวสมูทไม่มีชน</li>
+            <li>TikTok: คลิปยอดวิวแตะ 1 แสน / สต็อกคลิปเพิ่มเป็น 14 วัน</li>
+            <li>กราฟิก: งานโปรเสร็จก่อน Deadline / Comment แก้ไขลดลงชัดเจน</li>
+            <li>การตลาด: USP เสร็จพร้อมบรีฟแอด / แพลน มิ.ย. ครบ 100%</li>
+          </ul>
+        </div>
+        <div class="form-group">
+          <label class="required">เขียนผลงานของทีมคุณ</label>
+          <textarea id="achievement" placeholder="ทีมของคุณทำอะไรสำเร็จในสัปดาห์นี้?&#10;เช่น ยอดจอง / คลิปที่ปัง / งานที่เสร็จทันกำหนด / สิ่งที่น่าภาคภูมิใจ" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
+      <button class="btn btn-next" onclick="nextStep()">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- ════ STEP 3: ติดตาม Action ════ -->
+  <div class="step-page" id="step-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔁</div>
+        <div>
+          <h2>ติดตาม Action สัปดาห์ที่แล้ว</h2>
+          <p>งานที่รับปากไว้ตอนนี้เป็นอย่างไรบ้าง?</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="status-grid">
+          <div>
+            <input type="radio" name="actionStatus" id="s-done" value="เสร็จครบทุกข้อ ✅" class="status-option">
+            <label for="s-done" class="status-label">
+              <span class="status-emoji">✅</span>เสร็จครบทุกข้อ
+            </label>
+          </div>
+          <div>
+            <input type="radio" name="actionStatus" id="s-partial" value="เสร็จบางส่วน ⚠️" class="status-option">
+            <label for="s-partial" class="status-label">
+              <span class="status-emoji">⚠️</span>เสร็จบางส่วน
+            </label>
+          </div>
+          <div>
+            <input type="radio" name="actionStatus" id="s-notdone" value="ยังไม่ได้ทำ ❌" class="status-option">
+            <label for="s-notdone" class="status-label">
+              <span class="status-emoji">❌</span>ยังไม่ได้ทำ
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>ถ้ายังไม่เสร็จ — เหตุผลคืออะไร?</label>
+          <textarea id="actionReason" placeholder="ถ้าเสร็จครบแล้ว ข้ามข้อนี้ได้เลยครับ&#10;ถ้ายังไม่เสร็จ บอกเหตุผลและต้องการความช่วยเหลืออะไร?" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
+      <button class="btn btn-next" onclick="nextStep()">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- ════ STEP 4: ปัญหา ════ -->
+  <div class="step-page" id="step-3">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🚨</div>
+        <div>
+          <h2>ปัญหาที่แก้คนเดียวไม่ได้</h2>
+          <p>สำคัญมาก — ห้ามข้าม</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="section-intro">
+          เขียนปัญหาที่ทีมเจอแล้วแก้เองไม่ได้ หรือต้องการให้ทีมอื่น / ผู้บริหารรับรู้
+          ไม่ต้องกลัวผิด — เขียนตรงๆ ได้เลยครับ
+        </div>
+        <div class="form-group">
+          <label>ปัญหาที่เจอสัปดาห์นี้</label>
+          <textarea id="problem" placeholder="เช่น&#10;- ระบบ Auto-chat ยังไม่ Switch มา Tiny บางช่อง&#10;- ไม่มีกราฟิกโปรให้โพสต์ทันกำหนด&#10;- คิวชนหนัก เพราะไม่มีการ Confirm ล่วงหน้า&#10;(ถ้าไม่มีปัญหา พิมพ์ว่า 'ไม่มี' ได้เลย)" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
+      <button class="btn btn-next" onclick="nextStep()">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- ════ STEP 5: Cross-team ════ -->
+  <div class="step-page" id="step-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🤝</div>
+        <div>
+          <h2>ต้องการอะไรจากทีมอื่น?</h2>
+          <p>ระบุให้ชัด — เขียนได้ทุกแบบ</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="section-intro">
+          <strong>เขียนได้ทุกแบบ:</strong> ของที่รออยู่แต่ยังไม่ได้รับ · ปัญหาที่รอทีมอื่นแก้ · Feedback ที่อยากบอกแต่ยังไม่มีโอกาสพูด · ขอความช่วยเหลือ
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="cross-table">
+            <thead>
+              <tr>
+                <th style="width:35%">ถึงทีม</th>
+                <th style="width:45%">เรื่องที่ต้องการ / Feedback</th>
+                <th style="width:20%">ต้องการภายใน</th>
+              </tr>
+            </thead>
+            <tbody id="crossRows">
+            </tbody>
+          </table>
+        </div>
+        <button type="button" onclick="addCrossRow()" style="margin-top:10px; background:none; border:1.5px dashed var(--teal2); color:var(--teal2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; font-weight:600;">
+          + เพิ่มแถว
+        </button>
+        <p class="hint" style="margin-top:8px;">ถ้าไม่มีอะไรจะขอ กด "ถัดไป" ได้เลย</p>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
+      <button class="btn btn-next" onclick="nextStep()">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- ════ STEP 6: Action + พูดในประชุม ════ -->
+  <div class="step-page" id="step-5">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">✅</div>
+        <div>
+          <h2>Action สัปดาห์หน้า</h2>
+          <p>ระบุ Deadline ด้วยทุกข้อ</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="action-example">
+          <div class="action-example-label">💡 ตัวอย่าง</div>
+          <div class="action-example-row">
+            <span>ธุรการ: แก้ SOP ลงวันที่ให้ถูกต้องและส่งพี่ตี้ตรวจ</span>
+            <span class="action-deadline">พุธ 14 พ.ค.</span>
+          </div>
+          <div class="action-example-row">
+            <span>แอดมินเพจ: โทรตามเคส Unconfirmed อีก 80 สายที่เหลือ</span>
+            <span class="action-deadline">ศุกร์ 16 พ.ค.</span>
+          </div>
+          <div class="action-example-row">
+            <span>TikTok: ถ่ายสต็อกคลิปหมอไบร์ท + หมอต้น ให้มีสต็อก 10 วัน</span>
+            <span class="action-deadline">12 พ.ค.</span>
+          </div>
+        </div>
+        <div class="action-rows" id="actionRows"></div>
+        <button type="button" onclick="addActionRow()" style="margin-top:10px; background:none; border:1.5px dashed var(--teal2); color:var(--teal2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; font-weight:600;">
+          + เพิ่มงาน
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">💬</div>
+        <div>
+          <h2>อยากพูดอะไรในประชุม?</h2>
+          <p>ไม่ต้องกลัว — เขียนตรงๆ ได้เลย</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>เรื่องที่อยากหยิบขึ้นมาคุย</label>
+          <textarea id="agenda" placeholder="เช่น&#10;- ระบบที่ยังสับสนอยู่&#10;- กฎที่ไม่ชัดเจน&#10;- ข้อเสนอแนะ&#10;- อะไรก็ได้ที่อยากบอก&#10;(ถ้าไม่มี พิมพ์ว่า 'ไม่มี' ได้เลย)" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
+      <button class="btn btn-submit" onclick="submitForm()">📤 ส่งข้อมูล</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- SUCCESS SCREEN -->
+<div id="success-screen" class="container">
+  <div class="success-icon">✓</div>
+  <h2>ส่งข้อมูลเรียบร้อยแล้ว! 🎉</h2>
+  <p>ข้อมูลของคุณถูกบันทึกลง Google Sheets<br>และส่งแจ้งเตือนไปยัง Line Group CEO แล้วครับ</p>
+  <div class="success-detail" id="successDetail"></div>
+  <p style="font-size:13px; color:var(--text2);">ขอบคุณที่กรอกข้อมูลล่วงหน้า<br>ช่วยให้ประชุมราบรื่นขึ้นมากครับ 💪</p>
+</div>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p>กำลังบันทึกข้อมูล...</p>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────
+// !! แก้ค่านี้หลัง Deploy Google Apps Script !!
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd0GKl9AXMBpx9Yqg8Y2eXvyvCEjRtExKpAt4CWBhYkEaa0G7yaj5NJhBoS7mAygWB/exec";
+// ────────────────────────────────────────────────
+
+let currentStep = 0;
+const TOTAL_STEPS = 6;
+
+const depts = [
+  "ธุรการ","แอดมินเพจ","ที่ปรึกษาศัลยกรรม",
+  "ผู้ช่วยแพทย์","TikTok Content Creator","กราฟิก","การตลาด"
+];
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  // Set today as default date
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("meetingDate").value = today;
+
+  // Init cross-team rows
+  addCrossRow(); addCrossRow(); addCrossRow();
+
+  // Init action rows
+  addActionRow(); addActionRow(); addActionRow(); addActionRow(); addActionRow();
+
+  updateProgress();
+});
+
+function addCrossRow() {
+  const tbody = document.getElementById("crossRows");
+  const tr = document.createElement("tr");
+  const deptOptions = depts.map(d => `<option>${d}</option>`).join("");
+  tr.innerHTML = `
+    <td>
+      <select style="width:100%">
+        <option value="">— เลือกทีม —</option>
+        ${deptOptions}
+      </select>
+    </td>
+    <td><input type="text" style="width:100%" placeholder="รายละเอียด..."></td>
+    <td><input type="text" style="width:100%" placeholder="วันที่..."></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+let actionCount = 0;
+function addActionRow() {
+  actionCount++;
+  const wrap = document.getElementById("actionRows");
+  const div = document.createElement("div");
+  div.className = "action-row";
+  div.innerHTML = `
+    <div>
+      <span class="action-num">${actionCount}</span>
+      <input type="text" placeholder="งานที่จะทำ..." style="width:100%">
+    </div>
+    <input type="text" placeholder="Deadline...">
+  `;
+  wrap.appendChild(div);
+}
+
+function updateProgress() {
+  const pct = ((currentStep) / TOTAL_STEPS) * 100;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressLabel").textContent =
+    `ขั้นตอน ${currentStep + 1} จาก ${TOTAL_STEPS}`;
+
+  // Update step dots
+  document.querySelectorAll(".step-dot").forEach((dot, i) => {
+    dot.classList.remove("active", "done");
+    if (i === currentStep) dot.classList.add("active");
+    else if (i < currentStep) dot.classList.add("done");
+  });
+}
+
+function goToStep(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove("active");
+  currentStep = n;
+  document.getElementById(`step-${currentStep}`).classList.add("active");
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function nextStep() {
+  // Validate step 0
+  if (currentStep === 0) {
+    const name = document.getElementById("name").value.trim();
+    const dept = document.getElementById("department").value;
+    const date = document.getElementById("meetingDate").value;
+    if (!name || !dept || !date) {
+      alert("กรุณากรอกชื่อ-นามสกุล, แผนก และวันที่ประชุมให้ครบครับ");
+      return;
+    }
+  }
+  if (currentStep === 1) {
+    if (!document.getElementById("achievement").value.trim()) {
+      alert("กรุณาเขียนผลงานสัปดาห์นี้อย่างน้อย 1 ข้อครับ");
+      return;
+    }
+  }
+  if (currentStep < TOTAL_STEPS - 1) {
+    goToStep(currentStep + 1);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) goToStep(currentStep - 1);
+}
+
+function collectData() {
+  // Cross-team rows
+  const crossRows = [];
+  document.querySelectorAll("#crossRows tr").forEach(tr => {
+    const cells = tr.querySelectorAll("select, input");
+    const team = cells[0]?.value?.trim();
+    const detail = cells[1]?.value?.trim();
+    const deadline = cells[2]?.value?.trim();
+    if (team && detail) crossRows.push(`${team}: ${detail} (ภายใน: ${deadline || "-"})`);
+  });
+
+  // Action rows
+  const actions = [];
+  document.querySelectorAll("#actionRows .action-row").forEach((row, i) => {
+    const inputs = row.querySelectorAll("input");
+    const task = inputs[0]?.value?.trim();
+    const dl = inputs[1]?.value?.trim();
+    if (task) actions.push(`${i+1}. ${task} → ${dl || "ไม่ระบุ"}`);
+  });
+
+  const statusEl = document.querySelector('input[name="actionStatus"]:checked');
+
+  return {
+    timestamp: new Date().toLocaleString("th-TH"),
+    name: document.getElementById("name").value.trim(),
+    department: document.getElementById("department").value,
+    meetingDate: document.getElementById("meetingDate").value,
+    meetingTime: document.getElementById("meetingTime").value,
+    achievement: document.getElementById("achievement").value.trim(),
+    actionStatus: statusEl ? statusEl.value : "ไม่ระบุ",
+    actionReason: document.getElementById("actionReason").value.trim(),
+    problem: document.getElementById("problem").value.trim(),
+    crossTeam: crossRows.join(" | "),
+    actions: actions.join(" | "),
+    agenda: document.getElementById("agenda").value.trim(),
+  };
+}
+
+async function submitForm() {
+  const data = collectData();
+
+  // Show loading
+  document.getElementById("loading").classList.add("show");
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    // Show success (no-cors so we assume success)
+    document.getElementById("loading").classList.remove("show");
+    document.getElementById("mainForm").style.display = "none";
+    const ss = document.getElementById("success-screen");
+    ss.style.display = "block";
+
+    document.getElementById("successDetail").innerHTML = `
+      <h3>📋 สรุปข้อมูลที่ส่ง</h3>
+      <div class="success-row"><span>ชื่อ</span><span>${data.name}</span></div>
+      <div class="success-row"><span>แผนก</span><span>${data.department}</span></div>
+      <div class="success-row"><span>วันที่ประชุม</span><span>${data.meetingDate}</span></div>
+      <div class="success-row"><span>สถานะ Action</span><span>${data.actionStatus}</span></div>
+    `;
+
+  } catch (err) {
+    document.getElementById("loading").classList.remove("show");
+    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้งครับ\n" + err.message);
+  }
+}
+</script>
+</body>
+</html>
