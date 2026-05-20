@@ -163,6 +163,14 @@
   @media (max-width: 480px) {
     .form-grid { grid-template-columns: 1fr; }
   }
+  .form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px) {
+    .form-grid-3 { grid-template-columns: 1fr; }
+  }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1 / -1; }
 
@@ -272,31 +280,39 @@
   .cross-table td {
     padding: 8px 6px;
     border-bottom: 1px solid var(--gray2);
-    vertical-align: top;
+    vertical-align: middle;
   }
   .cross-table tr:nth-child(even) td { background: var(--gray1); }
   .cross-table select,
   .cross-table input {
-    font-size: 13px;
-    padding: 6px 8px;
-    border-radius: 6px;
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
   }
   .cross-table select { padding-right: 28px; }
 
-  /* ── ACTION TABLE ── */
-  .action-rows { display: flex; flex-direction: column; gap: 10px; }
-  .action-row {
+  /* ── ACTION TABLE (FIXED ALIGNMENT) ── */
+  .action-rows { display: flex; flex-direction: column; gap: 12px; }
+  .action-container-row {
     display: grid;
-    grid-template-columns: 1fr 130px;
-    gap: 8px;
-    align-items: start;
+    grid-template-columns: 1fr 160px;
+    gap: 12px;
+    align-items: center; /* ล็อคให้ทุกไอเทมอยู่ตรงกลางแนวตั้งเสมอกัน ไม่กระเดิด */
   }
-  .action-row input { font-size: 13px; }
+  @media (max-width: 480px) {
+    .action-container-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+  .action-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
   .action-num {
-    font-size: 11px; font-weight: 700;
-    color: var(--teal); background: var(--gray1);
-    border-radius: 6px; padding: 2px 8px;
-    margin-bottom: 6px; display: inline-block;
+    font-size: 12px; font-weight: 700;
+    color: var(--teal); background: var(--gray2);
+    border-radius: 6px; padding: 6px 10px;
+    display: inline-block; flex-shrink: 0;
   }
 
   /* ── EXAMPLE ACTION ── */
@@ -484,8 +500,7 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="form-grid">
-          <div class="form-group">
+        <div class="form-grid-3"> <div class="form-group">
             <label class="required">ชื่อ-นามสกุล</label>
             <input type="text" id="name" placeholder="เช่น สมใจ ใจดี">
           </div>
@@ -505,10 +520,6 @@
           <div class="form-group">
             <label class="required">วันที่ประชุม</label>
             <input type="date" id="meetingDate">
-          </div>
-          <div class="form-group">
-            <label>เวลาประชุม</label>
-            <input type="text" id="meetingTime" placeholder="เช่น 10:00 น.">
           </div>
         </div>
       </div>
@@ -630,16 +641,14 @@
       </div>
       <div class="card-body">
         <div class="section-intro">
-          ระบุทีมที่ต้องการติดต่อประสานงาน รายละเอียดเรื่องที่ต้องการ และกำหนดวันเดดไลน์
+          ระบุทีมที่ต้องการติดต่อประสานงาน และรายละเอียดเรื่องที่ต้องการความช่วยเหลือ
         </div>
         <div style="overflow-x:auto;">
           <table class="cross-table">
             <thead>
               <tr>
                 <th style="width:35%">ถึงทีม</th>
-                <th style="width:45%">เรื่องที่ต้องการ / Feedback</th>
-                <th style="width:20%">ต้องการภายใน</th>
-              </tr>
+                <th style="width:65%">เรื่องที่ต้องการ / Feedback</th> </tr>
             </thead>
             <tbody id="crossRows">
             </tbody>
@@ -768,9 +777,8 @@ function addCrossRow() {
         ${deptOptions}
       </select>
     </td>
-    <td><input type="text" style="width:100%" placeholder="รายละเอียดงาน..."></td>
-    <td><input type="text" style="width:100%" placeholder="เดดไลน์..."></td>
-  `;
+    <td><input type="text" style="width:100%" placeholder="รายละเอียดงานที่ต้องการให้ช่วย..."></td>
+  `; // นำคอลัมน์ input เดดไลน์ออกตามบรีฟ
   tbody.appendChild(tr);
 }
 
@@ -779,9 +787,9 @@ function addActionRow() {
   actionCount++;
   const wrap = document.getElementById("actionRows");
   const div = document.createElement("div");
-  div.className = "action-row";
+  div.className = "action-container-row"; // ใช้ Class ล็อคโครงสร้าง Grid ใหม่กันกระเดิด
   div.innerHTML = `
-    <div>
+    <div class="action-input-wrap">
       <span class="action-num">${actionCount}</span>
       <input type="text" placeholder="แผนงานสัปดาห์หน้า..." style="width:100%">
     </div>
@@ -838,19 +846,19 @@ function prevStep() {
 function collectData() {
   const crossRows = [];
   document.querySelectorAll("#crossRows tr").forEach(tr => {
-    const cells = tr.querySelectorAll("select, input");
-    const team = cells[0]?.value?.trim();
-    const detail = cells[1]?.value?.trim();
-    const deadline = cells[2]?.value?.trim();
-    if (team && detail) crossRows.push(`${team}: ${detail} (เดดไลน์: ${deadline || "-"})`);
+    const select = tr.querySelector("select");
+    const input = tr.querySelector("input[type='text']");
+    const team = select ? select.value.trim() : "";
+    const detail = input ? input.value.trim() : "";
+    if (team && detail) crossRows.push(`${team}: ${detail}`);
   });
 
   const actions = [];
   let validActionIndex = 1;
-  document.querySelectorAll("#actionRows .action-row").forEach((row) => {
+  document.querySelectorAll("#actionRows .action-container-row").forEach((row) => {
     const inputs = row.querySelectorAll("input");
-    const task = inputs[0]?.value?.trim();
-    const dl = inputs[1]?.value?.trim();
+    const task = inputs[0] ? inputs[0].value.trim() : "";
+    const dl = inputs[1] ? inputs[1].value.trim() : "";
     if (task) {
       actions.push(`${validActionIndex}. ${task} [เดดไลน์: ${dl || "ไม่ระบุ"}]`);
       validActionIndex++;
@@ -864,7 +872,7 @@ function collectData() {
     name: document.getElementById("name").value.trim(),
     department: document.getElementById("department").value,
     meetingDate: document.getElementById("meetingDate").value,
-    meetingTime: document.getElementById("meetingTime").value || "-",
+    meetingTime: "-", // ล็อคค่าว่างส่งแบคเอนด์เนื่องจากนำกล่องออกแล้ว
     achievement: document.getElementById("achievement").value.trim(),
     actionStatus: statusEl ? statusEl.value : "ไม่ระบุ",
     actionReason: document.getElementById("actionReason").value.trim() || "-",
@@ -884,7 +892,7 @@ function prepareReview() {
   let html = `
     <div class="review-section">
       <div class="review-title">👤 ข้อมูลผู้ส่งและวันประชุม</div>
-      <div class="review-content">คุณคอนเฟิร์มในนาม: <strong>${data.name}</strong> (${data.department})\nวันประชุมประจำสัปดาห์: ${data.meetingDate} | เวลา: ${data.meetingTime}</div>
+      <div class="review-content">คุณคอนเฟิร์มในนาม: <strong>${data.name}</strong> (${data.department})\nวันประชุมประจำสัปดาห์: ${data.meetingDate}</div>
     </div>
     <div class="review-section">
       <div class="review-title">🏆 ผลงานหลักของสัปดาห์นี้</div>
@@ -921,7 +929,6 @@ async function submitForm() {
   document.getElementById("loading").classList.add("show");
 
   try {
-    // ปรับรูปแบบการยิง POST ด้วย text/plain บรรจุสาย JSON ป้องกันปัญหา CORS และส่งผ่านเข้า Sheet ได้ชัวร์ 100%
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
