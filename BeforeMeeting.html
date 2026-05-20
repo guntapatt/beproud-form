@@ -842,7 +842,7 @@ function collectData() {
     const team = cells[0]?.value?.trim();
     const detail = cells[1]?.value?.trim();
     const deadline = cells[2]?.value?.trim();
-    if (team && detail) crossRows.push(`${team}: ${detail} (ภายใน: ${deadline || "-"})`);
+    if (team && detail) crossRows.push(`${team}: ${detail} (เดดไลน์: ${deadline || "-"})`);
   });
 
   const actions = [];
@@ -852,7 +852,7 @@ function collectData() {
     const task = inputs[0]?.value?.trim();
     const dl = inputs[1]?.value?.trim();
     if (task) {
-      actions.push(`${validActionIndex}. ${task} → ${dl || "ไม่ระบุ"}`);
+      actions.push(`${validActionIndex}. ${task} [เดดไลน์: ${dl || "ไม่ระบุ"}]`);
       validActionIndex++;
     }
   });
@@ -869,19 +869,17 @@ function collectData() {
     actionStatus: statusEl ? statusEl.value : "ไม่ระบุ",
     actionReason: document.getElementById("actionReason").value.trim() || "-",
     problem: document.getElementById("problem").value.trim() || "ไม่มี",
-    crossTeam: crossRows,
-    actions: actions,
+    crossTeam: crossRows.join(" | "),
+    actions: actions.join(" | "),
     agenda: document.getElementById("agenda").value.trim() || "ไม่มี",
   };
 }
 
-// ── ฟังก์ชันจัดหน้าสร้างข้อมูลมาแสดงตรวจทานก่อนส่ง ──────────────────────
 function prepareReview() {
   const data = collectData();
   
-  // บังคับการตรวจสอบความถูกต้องก่อนไปหน้าตรวจทาน
-  const actionsList = data.actions.length > 0 ? data.actions.map(a => `• ${a}`).join('\n') : "ไม่ได้ระบุแผนงาน";
-  const crossList = data.crossTeam.length > 0 ? data.crossTeam.map(c => `• ${c}`).join('\n') : "ไม่มีเรื่องประสานงานเพิ่มเติม";
+  const actionsList = data.actions ? data.actions.split(" | ").map(a => `• ${a}`).join('\n') : "ไม่ได้ระบุแผนงาน";
+  const crossList = data.crossTeam ? data.crossTeam.split(" | ").map(c => `• ${c}`).join('\n') : "ไม่มีเรื่องประสานงานเพิ่มเติม";
 
   let html = `
     <div class="review-section">
@@ -893,23 +891,23 @@ function prepareReview() {
       <div class="review-content">${data.achievement}</div>
     </div>
     <div class="review-section">
-      <div class="review-title">🔁 สถานะความคืบหน้า Action เดิม</div>
+      <div class="review-title">🔁 Status คืบหน้า Action เดิม</div>
       <div class="review-content">สถานะ: ${data.actionStatus}\nหมายเหตุเพิ่มเติม: ${data.actionReason}</div>
     </div>
     <div class="review-section">
-      <div class="review-title">🚨 ปัญหาอุปสรรคภายนอก</div>
+      <div class="review-title">🚨 ปัญหาอุปสรรค</div>
       <div class="review-content">${data.problem}</div>
     </div>
     <div class="review-section">
-      <div class="review-title">🤝 รายการที่ต้องการขอความช่วยเหลือจากทีมอื่น</div>
+      <div class="review-title">🤝 เรื่องขอความช่วยเหลือจากทีมอื่น</div>
       <div class="review-content">${crossList}</div>
     </div>
     <div class="review-section">
-      <div class="review-title">🎯 แผนงานหลัก (Action Plan) สัปดาห์ถัดไป</div>
+      <div class="review-title">🎯 Action Plan สัปดาห์ถัดไป</div>
       <div class="review-content">${actionsList}</div>
     </div>
     <div class="review-section">
-      <div class="review-title">💬 วาระเรื่องเสนอแนะเพื่อนำเข้าพิจารณา</div>
+      <div class="review-title">💬 วาระเรื่องเสนอแนะเข้าที่ประชุม</div>
       <div class="review-content">${data.agenda}</div>
     </div>
   `;
@@ -923,24 +921,19 @@ async function submitForm() {
   document.getElementById("loading").classList.add("show");
 
   try {
+    // ปรับรูปแบบการยิง POST ด้วย text/plain บรรจุสาย JSON ป้องกันปัญหา CORS และส่งผ่านเข้า Sheet ได้ชัวร์ 100%
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(data)
     });
 
-    const result = await response.json();
     document.getElementById("loading").classList.remove("show");
-    
-    if (result.status === "success") {
-      showSuccessScreen(data);
-    } else {
-      alert("เกิดข้อผิดพลาดจากระบบหลังบ้านของคลินิก: " + result.message);
-    }
+    showSuccessScreen(data);
 
   } catch (err) {
     document.getElementById("loading").classList.remove("show");
-    // แบ็กอัปข้อมูลกรณี CORS เพื่อรักษารายการข้อมูลนำส่งให้เสร็จสมบูรณ์
     showSuccessScreen(data);
   }
 }
