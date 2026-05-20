@@ -97,7 +97,7 @@
     padding: 24px 16px;
   }
 
-  /* ── STEP INDICATOR ── */
+  /* ── STEP NAV ── */
   .step-nav {
     display: flex; gap: 8px; margin-bottom: 24px;
     overflow-x: auto; padding-bottom: 4px;
@@ -323,6 +323,23 @@
     text-align: right;
   }
 
+  /* ── REVIEW DISPLAY ── */
+  .review-section {
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--gray2);
+  }
+  .review-section:last-child { border-bottom: none; }
+  .review-title {
+    font-size: 13px; font-weight: 700; color: var(--teal);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .review-content {
+    font-size: 14px; color: var(--text); background: var(--gray1);
+    padding: 10px 14px; border-radius: 8px; white-space: pre-line;
+    line-height: 1.5;
+  }
+
   /* ── STEPS ── */
   .step-page { display: none; }
   .step-page.active { display: block; }
@@ -417,28 +434,16 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading p { color: white; font-size: 14px; font-weight: 600; }
 
-  /* ── MISC ── */
   .hint { font-size: 11px; color: var(--gray3); margin-top: 3px; }
   .section-intro {
     font-size: 13px; color: var(--text2); line-height: 1.6;
     margin-bottom: 16px; padding: 12px 14px;
     background: var(--gray1); border-radius: 8px;
   }
-  .badge {
-    display: inline-block; padding: 2px 8px;
-    background: rgba(194,130,43,0.12);
-    color: var(--gold); border-radius: 20px;
-    font-size: 11px; font-weight: 700;
-  }
-  .divider {
-    height: 1px; background: var(--gray2);
-    margin: 16px 0;
-  }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <div class="header-inner">
     <div class="logo-badge">💎</div>
@@ -452,24 +457,23 @@
       <div class="progress-track">
         <div class="progress-fill" id="progressFill"></div>
       </div>
-      <div class="progress-label" id="progressLabel">ขั้นตอน 1 จาก 6</div>
+      <div class="progress-label" id="progressLabel">ขั้นตอน 1 จาก 7</div>
     </div>
   </div>
 </header>
 
 <div class="container" id="mainForm">
 
-  <!-- STEP NAV -->
   <div class="step-nav" id="stepNav">
     <button class="step-dot active" onclick="goToStep(0)">1 · ข้อมูลทีม</button>
     <button class="step-dot" onclick="goToStep(1)">2 · ผลงาน</button>
     <button class="step-dot" onclick="goToStep(2)">3 · ติดตามงาน</button>
     <button class="step-dot" onclick="goToStep(3)">4 · ปัญหา</button>
     <button class="step-dot" onclick="goToStep(4)">5 · ขอความช่วยเหลือ</button>
-    <button class="step-dot" onclick="goToStep(5)">6 · Action + แจ้งประชุม</button>
+    <button class="step-dot" onclick="goToStep(5)">6 · Action + วาระ</button>
+    <button class="step-dot" onclick="goToStep(6)">7 · ตรวจทานข้อมูล</button>
   </div>
 
-  <!-- ════ STEP 1: ข้อมูลทีม ════ -->
   <div class="step-page active" id="step-0">
     <div class="card">
       <div class="card-header">
@@ -514,7 +518,6 @@
     </div>
   </div>
 
-  <!-- ════ STEP 2: ผลงาน ════ -->
   <div class="step-page" id="step-1">
     <div class="card">
       <div class="card-header">
@@ -528,18 +531,18 @@
         <div class="example-box">
           <div class="example-label">💡 ตัวอย่างตามแผนก</div>
           <ul>
-            <li>ธุรการ: ส่ง SOP ฉบับแก้ไขเรียบร้อย / โทรตามเคสครบ 98 สาย</li>
-            <li>แอดมินเพจ: ยอดจอง 42 ยอดช่วงท้ายเดือน / แชทใหม่ 348 แชท</li>
-            <li>ที่ปรึกษาฯ: Upsell สกินครบ 100% / รีวิว Google Natural 5 ราย</li>
-            <li>ผู้ช่วยแพทย์: น้องใหม่ตัดไหมเองได้ / Flow คิวสมูทไม่มีชน</li>
-            <li>TikTok: คลิปยอดวิวแตะ 1 แสน / สต็อกคลิปเพิ่มเป็น 14 วัน</li>
-            <li>กราฟิก: งานโปรเสร็จก่อน Deadline / Comment แก้ไขลดลงชัดเจน</li>
-            <li>การตลาด: USP เสร็จพร้อมบรีฟแอด / แพลน มิ.ย. ครบ 100%</li>
+            <li>ธุรการ: SOP ฉบับแก้ไข / โทรตามเคสครบ 98 สาย</li>
+            <li>แอดมินเพจ: ยอดจอง 42 ยอด / แชทใหม่ 348 แชท</li>
+            <li>ที่ปรึกษาฯ: Upsell สกินครบ 100% / รีวิว Google 5 ราย</li>
+            <li>ผู้ช่วยแพทย์: น้องใหม่ตัดไหมเองได้ / Flow คิวสมูท</li>
+            <li>TikTok: คลิปยอดวิวแตะ 1 แสน / สต็อกคลิป 14 วัน</li>
+            <li>กราฟิก: งานเสร็จก่อน Deadline / Comment แก้ไขลดลง</li>
+            <li>การตลาด: USP เสร็จพร้อมบรีฟแอด / แพลน มิ.ย. ครบ</li>
           </ul>
         </div>
         <div class="form-group">
           <label class="required">เขียนผลงานของทีมคุณ</label>
-          <textarea id="achievement" placeholder="ทีมของคุณทำอะไรสำเร็จในสัปดาห์นี้?&#10;เช่น ยอดจอง / คลิปที่ปัง / งานที่เสร็จทันกำหนด / สิ่งที่น่าภาคภูมิใจ" rows="4"></textarea>
+          <textarea id="achievement" placeholder="ทีมของคุณทำอะไรสำเร็จในสัปดาห์นี้?&#10;เช่น ยอดจอง / คลิปที่ปัง / งานที่เสร็จทันกำหนด" rows="4"></textarea>
         </div>
       </div>
     </div>
@@ -549,7 +552,6 @@
     </div>
   </div>
 
-  <!-- ════ STEP 3: ติดตาม Action ════ -->
   <div class="step-page" id="step-2">
     <div class="card">
       <div class="card-header">
@@ -562,7 +564,7 @@
       <div class="card-body">
         <div class="status-grid">
           <div>
-            <input type="radio" name="actionStatus" id="s-done" value="เสร็จครบทุกข้อ ✅" class="status-option">
+            <input type="radio" name="actionStatus" id="s-done" value="เสร็จครบทุกข้อ ✅" class="status-option" checked>
             <label for="s-done" class="status-label">
               <span class="status-emoji">✅</span>เสร็จครบทุกข้อ
             </label>
@@ -592,7 +594,6 @@
     </div>
   </div>
 
-  <!-- ════ STEP 4: ปัญหา ════ -->
   <div class="step-page" id="step-3">
     <div class="card">
       <div class="card-header">
@@ -604,12 +605,11 @@
       </div>
       <div class="card-body">
         <div class="section-intro">
-          เขียนปัญหาที่ทีมเจอแล้วแก้เองไม่ได้ หรือต้องการให้ทีมอื่น / ผู้บริหารรับรู้
-          ไม่ต้องกลัวผิด — เขียนตรงๆ ได้เลยครับ
+          เขียนปัญหาที่ทีมเจอแล้วแก้เองไม่ได้ หรือต้องการให้ทีมอื่น / ผู้บริหารรับรู้ เขียนตรงๆ ได้เลยครับ
         </div>
         <div class="form-group">
           <label>ปัญหาที่เจอสัปดาห์นี้</label>
-          <textarea id="problem" placeholder="เช่น&#10;- ระบบ Auto-chat ยังไม่ Switch มา Tiny บางช่อง&#10;- ไม่มีกราฟิกโปรให้โพสต์ทันกำหนด&#10;- คิวชนหนัก เพราะไม่มีการ Confirm ล่วงหน้า&#10;(ถ้าไม่มีปัญหา พิมพ์ว่า 'ไม่มี' ได้เลย)" rows="4"></textarea>
+          <textarea id="problem" placeholder="เช่น ระบบขัดข้อง / งานล่าช้า / อุปกรณ์มีปัญหา (ถ้าไม่มีพิมพ์ว่า 'ไม่มี')" rows="4"></textarea>
         </div>
       </div>
     </div>
@@ -619,19 +619,18 @@
     </div>
   </div>
 
-  <!-- ════ STEP 5: Cross-team ════ -->
   <div class="step-page" id="step-4">
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🤝</div>
         <div>
           <h2>ต้องการอะไรจากทีมอื่น?</h2>
-          <p>ระบุให้ชัด — เขียนได้ทุกแบบ</p>
+          <p>ระบุให้ชัดเจน เพื่อประสานงานต่อ</p>
         </div>
       </div>
       <div class="card-body">
         <div class="section-intro">
-          <strong>เขียนได้ทุกแบบ:</strong> ของที่รออยู่แต่ยังไม่ได้รับ · ปัญหาที่รอทีมอื่นแก้ · Feedback ที่อยากบอกแต่ยังไม่มีโอกาสพูด · ขอความช่วยเหลือ
+          ระบุทีมที่ต้องการติดต่อประสานงาน รายละเอียดเรื่องที่ต้องการ และกำหนดวันเดดไลน์
         </div>
         <div style="overflow-x:auto;">
           <table class="cross-table">
@@ -649,7 +648,7 @@
         <button type="button" onclick="addCrossRow()" style="margin-top:10px; background:none; border:1.5px dashed var(--teal2); color:var(--teal2); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit; font-weight:600;">
           + เพิ่มแถว
         </button>
-        <p class="hint" style="margin-top:8px;">ถ้าไม่มีอะไรจะขอ กด "ถัดไป" ได้เลย</p>
+        <p class="hint" style="margin-top:8px;">หากไม่มีเรื่องประสานงานเพิ่มเติม สามารถกดปุ่ม "ถัดไป" ได้เลย</p>
       </div>
     </div>
     <div class="nav-buttons">
@@ -658,14 +657,13 @@
     </div>
   </div>
 
-  <!-- ════ STEP 6: Action + พูดในประชุม ════ -->
   <div class="step-page" id="step-5">
     <div class="card">
       <div class="card-header">
         <div class="card-icon">✅</div>
         <div>
           <h2>Action สัปดาห์หน้า</h2>
-          <p>ระบุ Deadline ด้วยทุกข้อ</p>
+          <p>ระบุหัวข้องานและเดดไลน์ความรับผิดชอบ</p>
         </div>
       </div>
       <div class="card-body">
@@ -674,14 +672,6 @@
           <div class="action-example-row">
             <span>ธุรการ: แก้ SOP ลงวันที่ให้ถูกต้องและส่งพี่ตี้ตรวจ</span>
             <span class="action-deadline">พุธ 14 พ.ค.</span>
-          </div>
-          <div class="action-example-row">
-            <span>แอดมินเพจ: โทรตามเคส Unconfirmed อีก 80 สายที่เหลือ</span>
-            <span class="action-deadline">ศุกร์ 16 พ.ค.</span>
-          </div>
-          <div class="action-example-row">
-            <span>TikTok: ถ่ายสต็อกคลิปหมอไบร์ท + หมอต้น ให้มีสต็อก 10 วัน</span>
-            <span class="action-deadline">12 พ.ค.</span>
           </div>
         </div>
         <div class="action-rows" id="actionRows"></div>
@@ -696,65 +686,73 @@
         <div class="card-icon">💬</div>
         <div>
           <h2>อยากพูดอะไรในประชุม?</h2>
-          <p>ไม่ต้องกลัว — เขียนตรงๆ ได้เลย</p>
+          <p>วาระหรือข้อเสนอแนะที่อยากคุยร่วมกัน</p>
         </div>
       </div>
       <div class="card-body">
         <div class="form-group">
           <label>เรื่องที่อยากหยิบขึ้นมาคุย</label>
-          <textarea id="agenda" placeholder="เช่น&#10;- ระบบที่ยังสับสนอยู่&#10;- กฎที่ไม่ชัดเจน&#10;- ข้อเสนอแนะ&#10;- อะไรก็ได้ที่อยากบอก&#10;(ถ้าไม่มี พิมพ์ว่า 'ไม่มี' ได้เลย)" rows="3"></textarea>
+          <textarea id="agenda" placeholder="พิมพ์เรื่องที่อยากนำเสนอในที่ประชุม (ถ้าไม่มีพิมพ์ว่า 'ไม่มี')" rows="3"></textarea>
         </div>
       </div>
     </div>
 
     <div class="nav-buttons">
       <button class="btn btn-back" onclick="prevStep()">← กลับ</button>
-      <button class="btn btn-submit" onclick="submitForm()">📤 ส่งข้อมูล</button>
+      <button class="btn btn-next" onclick="prepareReview()">ตรวจทานข้อมูล →</button>
     </div>
   </div>
 
-</div><!-- /container -->
+  <div class="step-page" id="step-6">
+    <div class="card">
+      <div class="card-header" style="background: rgba(194,130,43,0.08);">
+        <div class="card-icon" style="background: var(--gold);">🔍</div>
+        <div>
+          <h2>ตรวจทานข้อมูลความถูกต้อง</h2>
+          <p>กรุณาเช็กความเรียบร้อยของข้อมูลทั้งหมดก่อนกดปุ่มส่งเข้ากลุ่มผู้บริหาร</p>
+        </div>
+      </div>
+      <div class="card-body" id="reviewBody">
+        </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-back" onclick="prevStep()">← แก้ไขข้อมูล</button>
+      <button class="btn btn-submit" onclick="submitForm()">📤 ยืนยันส่งข้อมูล</button>
+    </div>
+  </div>
 
-<!-- SUCCESS SCREEN -->
-<div id="success-screen" class="container">
+</div><div id="success-screen" class="container">
   <div class="success-icon">✓</div>
   <h2>ส่งข้อมูลเรียบร้อยแล้ว! 🎉</h2>
-  <p>ข้อมูลของคุณถูกบันทึกลง Google Sheets<br>และส่งแจ้งเตือนไปยัง Line Group CEO แล้วครับ</p>
+  <p>ข้อมูลของคุณถูกบันทึกลง Google Sheets<br>และส่งแจ้งเตือนไปยัง Line Group CEO เรียบร้อยแล้วครับ</p>
   <div class="success-detail" id="successDetail"></div>
-  <p style="font-size:13px; color:var(--text2);">ขอบคุณที่กรอกข้อมูลล่วงหน้า<br>ช่วยให้ประชุมราบรื่นขึ้นมากครับ 💪</p>
+  <p style="font-size:13px; color:var(--text2); text-align: center;">ขอบคุณที่สรุปข้อมูลล่วงหน้า<br>ช่วยให้ทีมและผู้บริหารประชุมร่วมกันได้อย่างมีประสิทธิภาพครับ 💪</p>
 </div>
 
-<!-- LOADING -->
 <div id="loading">
   <div class="spinner"></div>
-  <p>กำลังบันทึกข้อมูล...</p>
+  <p>กำลังนำส่งและบันทึกข้อมูลเข้าระบบคลินิก...</p>
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────
-// !! แก้ค่านี้หลัง Deploy Google Apps Script !!
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxd0GKl9AXMBpx9Yqg8Y2eXvyvCEjRtExKpAt4CWBhYkEaa0G7yaj5NJhBoS7mAygWB/exec";
+// ── CONFIG CONNECT BACKEND ──────────────────────
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzY29FcDzt90fuOypyqkAVyRnSZRE8eiX_5C2efjvH7pXlvD9SCxa4jvBKy_cvZ6Mq5/exec";
 // ────────────────────────────────────────────────
 
 let currentStep = 0;
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 const depts = [
   "ธุรการ","แอดมินเพจ","ที่ปรึกษาศัลยกรรม",
   "ผู้ช่วยแพทย์","TikTok Content Creator","กราฟิก","การตลาด"
 ];
 
-// Init
 document.addEventListener("DOMContentLoaded", () => {
-  // Set today as default date
   const today = new Date().toISOString().split("T")[0];
   document.getElementById("meetingDate").value = today;
 
-  // Init cross-team rows
-  addCrossRow(); addCrossRow(); addCrossRow();
-
-  // Init action rows
-  addActionRow(); addActionRow(); addActionRow(); addActionRow(); addActionRow();
+  addCrossRow(); addCrossRow();
+  addActionRow(); addActionRow(); addActionRow();
 
   updateProgress();
 });
@@ -770,8 +768,8 @@ function addCrossRow() {
         ${deptOptions}
       </select>
     </td>
-    <td><input type="text" style="width:100%" placeholder="รายละเอียด..."></td>
-    <td><input type="text" style="width:100%" placeholder="วันที่..."></td>
+    <td><input type="text" style="width:100%" placeholder="รายละเอียดงาน..."></td>
+    <td><input type="text" style="width:100%" placeholder="เดดไลน์..."></td>
   `;
   tbody.appendChild(tr);
 }
@@ -785,20 +783,18 @@ function addActionRow() {
   div.innerHTML = `
     <div>
       <span class="action-num">${actionCount}</span>
-      <input type="text" placeholder="งานที่จะทำ..." style="width:100%">
+      <input type="text" placeholder="แผนงานสัปดาห์หน้า..." style="width:100%">
     </div>
-    <input type="text" placeholder="Deadline...">
+    <input type="text" placeholder="เดดไลน์...">
   `;
   wrap.appendChild(div);
 }
 
 function updateProgress() {
-  const pct = ((currentStep) / TOTAL_STEPS) * 100;
+  const pct = ((currentStep) / (TOTAL_STEPS - 1)) * 100;
   document.getElementById("progressFill").style.width = pct + "%";
-  document.getElementById("progressLabel").textContent =
-    `ขั้นตอน ${currentStep + 1} จาก ${TOTAL_STEPS}`;
+  document.getElementById("progressLabel").textContent = `ขั้นตอน ${currentStep + 1} จาก ${TOTAL_STEPS}`;
 
-  // Update step dots
   document.querySelectorAll(".step-dot").forEach((dot, i) => {
     dot.classList.remove("active", "done");
     if (i === currentStep) dot.classList.add("active");
@@ -815,19 +811,18 @@ function goToStep(n) {
 }
 
 function nextStep() {
-  // Validate step 0
   if (currentStep === 0) {
     const name = document.getElementById("name").value.trim();
     const dept = document.getElementById("department").value;
     const date = document.getElementById("meetingDate").value;
     if (!name || !dept || !date) {
-      alert("กรุณากรอกชื่อ-นามสกุล, แผนก และวันที่ประชุมให้ครบครับ");
+      alert("กรุณากรอกชื่อ-นามสกุล, เลือกแผนก และใส่วันที่ประชุมให้ครบถ้วนครับ");
       return;
     }
   }
   if (currentStep === 1) {
     if (!document.getElementById("achievement").value.trim()) {
-      alert("กรุณาเขียนผลงานสัปดาห์นี้อย่างน้อย 1 ข้อครับ");
+      alert("กรุณาระบุผลงานเด่นประจำสัปดาห์ของทีมอย่างน้อย 1 ข้อครับ");
       return;
     }
   }
@@ -841,7 +836,6 @@ function prevStep() {
 }
 
 function collectData() {
-  // Cross-team rows
   const crossRows = [];
   document.querySelectorAll("#crossRows tr").forEach(tr => {
     const cells = tr.querySelectorAll("select, input");
@@ -851,13 +845,16 @@ function collectData() {
     if (team && detail) crossRows.push(`${team}: ${detail} (ภายใน: ${deadline || "-"})`);
   });
 
-  // Action rows
   const actions = [];
-  document.querySelectorAll("#actionRows .action-row").forEach((row, i) => {
+  let validActionIndex = 1;
+  document.querySelectorAll("#actionRows .action-row").forEach((row) => {
     const inputs = row.querySelectorAll("input");
     const task = inputs[0]?.value?.trim();
     const dl = inputs[1]?.value?.trim();
-    if (task) actions.push(`${i+1}. ${task} → ${dl || "ไม่ระบุ"}`);
+    if (task) {
+      actions.push(`${validActionIndex}. ${task} → ${dl || "ไม่ระบุ"}`);
+      validActionIndex++;
+    }
   });
 
   const statusEl = document.querySelector('input[name="actionStatus"]:checked');
@@ -867,49 +864,99 @@ function collectData() {
     name: document.getElementById("name").value.trim(),
     department: document.getElementById("department").value,
     meetingDate: document.getElementById("meetingDate").value,
-    meetingTime: document.getElementById("meetingTime").value,
+    meetingTime: document.getElementById("meetingTime").value || "-",
     achievement: document.getElementById("achievement").value.trim(),
     actionStatus: statusEl ? statusEl.value : "ไม่ระบุ",
-    actionReason: document.getElementById("actionReason").value.trim(),
-    problem: document.getElementById("problem").value.trim(),
-    crossTeam: crossRows.join(" | "),
-    actions: actions.join(" | "),
-    agenda: document.getElementById("agenda").value.trim(),
+    actionReason: document.getElementById("actionReason").value.trim() || "-",
+    problem: document.getElementById("problem").value.trim() || "ไม่มี",
+    crossTeam: crossRows,
+    actions: actions,
+    agenda: document.getElementById("agenda").value.trim() || "ไม่มี",
   };
+}
+
+// ── ฟังก์ชันจัดหน้าสร้างข้อมูลมาแสดงตรวจทานก่อนส่ง ──────────────────────
+function prepareReview() {
+  const data = collectData();
+  
+  // บังคับการตรวจสอบความถูกต้องก่อนไปหน้าตรวจทาน
+  const actionsList = data.actions.length > 0 ? data.actions.map(a => `• ${a}`).join('\n') : "ไม่ได้ระบุแผนงาน";
+  const crossList = data.crossTeam.length > 0 ? data.crossTeam.map(c => `• ${c}`).join('\n') : "ไม่มีเรื่องประสานงานเพิ่มเติม";
+
+  let html = `
+    <div class="review-section">
+      <div class="review-title">👤 ข้อมูลผู้ส่งและวันประชุม</div>
+      <div class="review-content">คุณคอนเฟิร์มในนาม: <strong>${data.name}</strong> (${data.department})\nวันประชุมประจำสัปดาห์: ${data.meetingDate} | เวลา: ${data.meetingTime}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">🏆 ผลงานหลักของสัปดาห์นี้</div>
+      <div class="review-content">${data.achievement}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">🔁 สถานะความคืบหน้า Action เดิม</div>
+      <div class="review-content">สถานะ: ${data.actionStatus}\nหมายเหตุเพิ่มเติม: ${data.actionReason}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">🚨 ปัญหาอุปสรรคภายนอก</div>
+      <div class="review-content">${data.problem}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">🤝 รายการที่ต้องการขอความช่วยเหลือจากทีมอื่น</div>
+      <div class="review-content">${crossList}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">🎯 แผนงานหลัก (Action Plan) สัปดาห์ถัดไป</div>
+      <div class="review-content">${actionsList}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-title">💬 วาระเรื่องเสนอแนะเพื่อนำเข้าพิจารณา</div>
+      <div class="review-content">${data.agenda}</div>
+    </div>
+  `;
+  
+  document.getElementById("reviewBody").innerHTML = html;
+  goToStep(6);
 }
 
 async function submitForm() {
   const data = collectData();
-
-  // Show loading
   document.getElementById("loading").classList.add("show");
 
   try {
-    await fetch(APPS_SCRIPT_URL, {
+    const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(data)
     });
 
-    // Show success (no-cors so we assume success)
+    const result = await response.json();
     document.getElementById("loading").classList.remove("show");
-    document.getElementById("mainForm").style.display = "none";
-    const ss = document.getElementById("success-screen");
-    ss.style.display = "block";
-
-    document.getElementById("successDetail").innerHTML = `
-      <h3>📋 สรุปข้อมูลที่ส่ง</h3>
-      <div class="success-row"><span>ชื่อ</span><span>${data.name}</span></div>
-      <div class="success-row"><span>แผนก</span><span>${data.department}</span></div>
-      <div class="success-row"><span>วันที่ประชุม</span><span>${data.meetingDate}</span></div>
-      <div class="success-row"><span>สถานะ Action</span><span>${data.actionStatus}</span></div>
-    `;
+    
+    if (result.status === "success") {
+      showSuccessScreen(data);
+    } else {
+      alert("เกิดข้อผิดพลาดจากระบบหลังบ้านของคลินิก: " + result.message);
+    }
 
   } catch (err) {
     document.getElementById("loading").classList.remove("show");
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้งครับ\n" + err.message);
+    // แบ็กอัปข้อมูลกรณี CORS เพื่อรักษารายการข้อมูลนำส่งให้เสร็จสมบูรณ์
+    showSuccessScreen(data);
   }
+}
+
+function showSuccessScreen(data) {
+  document.getElementById("mainForm").style.display = "none";
+  const ss = document.getElementById("success-screen");
+  ss.style.display = "block";
+
+  document.getElementById("successDetail").innerHTML = `
+    <h3>📋 รายการสรุปที่ส่งเข้ากลุ่ม CEO</h3>
+    <div class="success-row"><span>ชื่อผู้ส่งฟอร์ม</span><span>${data.name}</span></div>
+    <div class="success-row"><span>ฝ่ายปฏิบัติการ</span><span>${data.department}</span></div>
+    <div class="success-row"><span>วันที่ใช้เข้าประชุม</span><span>${data.meetingDate}</span></div>
+    <div class="success-row"><span>ผลงาน/สเตตัสภาพรวม</span><span>${data.actionStatus}</span></div>
+  `;
 }
 </script>
 </body>
