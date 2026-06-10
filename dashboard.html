@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BeProud — ออเดอร์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #055367;
+  --teal:  #1F7A95;
+  --teal2: #e6f4f8;
+  --gold:  #C2822B;
+
+  --bg:      #f0f2f5;
+  --surface: #ffffff;
+  --border:  #e4e8ed;
+  --text:    #1a2030;
+  --sub:     #6b7585;
+  --hint:    #adb5c0;
+
+  --y-bg: #fff8e6; --y-border: #fde68a; --y-text: #7c4a00; --y-dot: #f59e0b;
+  --b-bg: #e8f3ff; --b-border: #bcd9ff; --b-text: #1a4a80; --b-dot: #3b82f6;
+  --g-bg: #e8faf0; --g-border: #a7f0c4; --g-text: #0d4f2a; --g-dot: #22c55e;
+  --r-bg: #fff0f0; --r-border: #ffc9c9; --r-text: #7a1a1a; --r-dot: #ef4444;
+
+  --h: 54px;
+  --tab-h: 52px;
+  --r: 12px;
+  --r-sm: 8px;
+  --sh: 0 1px 4px rgba(0,0,0,.07);
+  --sh2: 0 4px 16px rgba(0,0,0,.10);
+  --t: .18s ease;
+}
+[data-dark] {
+  --bg:      #10131a;
+  --surface: #181d27;
+  --border:  #262d3a;
+  --text:    #e8ecf2;
+  --sub:     #8892a4;
+  --hint:    #444e60;
+  --teal2:   #0d2535;
+  --y-bg:#261c04; --y-border:#6b3e00; --y-text:#fcd34d;
+  --b-bg:#071830; --b-border:#1a3d6b; --b-text:#93c5fd;
+  --g-bg:#041a0e; --g-border:#14522a; --g-text:#86efac;
+  --r-bg:#1a0404; --r-border:#6b1414; --r-text:#fca5a5;
+  --sh: 0 1px 4px rgba(0,0,0,.3);
+  --sh2:0 4px 16px rgba(0,0,0,.45);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Sarabun',-apple-system,sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; font-size:15px; line-height:1.55;
+  transition:background var(--t),color var(--t);
+  -webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit;}
+button,select,input{font-family:inherit;font-size:inherit;}
+img{display:block;}
+
+/* ── HEADER ── */
+.hdr{
+  position:sticky;top:0;z-index:200;
+  height:var(--h);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 16px;gap:10px;
+  box-shadow:var(--sh);
+}
+.logo{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--navy),var(--teal));
+  display:grid;place-items:center;
+  color:#fff;font-weight:700;font-size:11px;letter-spacing:.5px;
+  box-shadow:0 2px 6px rgba(5,83,103,.28);
+}
+.brand{flex:1;min-width:0;}
+.brand-name{font-size:14px;font-weight:700;color:var(--navy);line-height:1.1;}
+[data-dark] .brand-name{color:var(--teal);}
+.brand-sub{font-size:10px;color:var(--sub);}
+
+/* desktop nav — hidden on mobile */
+.desk-nav{display:flex;align-items:center;gap:4px;}
+.nav-a{
+  padding:6px 11px;border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;color:var(--sub);
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+  transition:background var(--t),color var(--t);
+}
+.nav-a:hover{background:var(--bg);color:var(--text);}
+.nav-a.on{background:var(--teal2);color:var(--teal);}
+
+.btn-order{
+  padding:7px 13px;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--teal),var(--navy));
+  color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+  box-shadow:0 2px 7px rgba(31,122,149,.32);
+  transition:opacity var(--t),transform var(--t);
+}
+.btn-order:hover{opacity:.9;transform:translateY(-1px);}
+.icn-btn{
+  width:34px;height:34px;border-radius:var(--r-sm);flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--sub);cursor:pointer;font-size:15px;
+  display:grid;place-items:center;
+  transition:background var(--t),transform var(--t);
+}
+.icn-btn:hover{background:var(--border);}
+.icn-btn:active{transform:scale(.9);}
+
+/* ── SUMMARY STRIP ── */
+.strip{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.strip::-webkit-scrollbar{display:none;}
+.strip-item{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 18px;border-right:1px solid var(--border);
+  min-width:110px;flex-shrink:0;
+}
+.strip-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.strip-num{font-size:18px;font-weight:700;line-height:1;}
+.strip-lbl{font-size:10px;color:var(--sub);font-weight:500;margin-top:1px;}
+
+/* ── TOOLBAR ── */
+.bar{
+  padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+}
+.srch{
+  position:relative;flex:1;min-width:0;
+}
+.srch input{
+  width:100%;padding:8px 10px 8px 32px;
+  border:1px solid var(--border);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:13px;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.srch input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,122,149,.1);}
+.srch input::placeholder{color:var(--hint);}
+.srch-ic{
+  position:absolute;left:9px;top:50%;transform:translateY(-50%);
+  color:var(--hint);font-size:13px;pointer-events:none;
+}
+.flt{
+  padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:12px;outline:none;cursor:pointer;
+  white-space:nowrap;max-width:110px;
+}
+.flt:focus{border-color:var(--teal);}
+.upd{font-size:11px;color:var(--hint);white-space:nowrap;flex-shrink:0;}
+
+/* ── MOBILE TABS ── */
+.mob-tabs{
+  display:none;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.mob-tabs::-webkit-scrollbar{display:none;}
+.mob-tabs-inner{display:flex;padding:0 12px;gap:0;}
+.tab-btn{
+  padding:12px 16px;
+  font-size:13px;font-weight:600;color:var(--sub);
+  background:none;border:none;cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:color var(--t),border-color var(--t);
+  display:flex;align-items:center;gap:6px;
+}
+.tab-btn.on{color:var(--teal);border-bottom-color:var(--teal);}
+.tab-pill{
+  font-size:10px;font-weight:700;
+  padding:1px 6px;border-radius:10px;
+  background:var(--border);color:var(--sub);
+}
+.tab-btn.on .tab-pill{background:var(--teal);color:#fff;}
+
+/* ── BOARD ── */
+.board{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  padding:14px 16px 32px;
+  align-items:start;
+}
+
+/* ── COLUMN ── */
+.col{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  box-shadow:var(--sh);
+}
+.col-hd{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 14px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+.col-bar{width:3px;height:18px;border-radius:2px;flex-shrink:0;}
+.col-lbl{font-size:13px;font-weight:700;flex:1;}
+.col-cnt{
+  font-size:11px;font-weight:700;
+  padding:2px 7px;border-radius:10px;
+  background:var(--border);color:var(--sub);
+}
+.show-btn{
+  font-size:11px;font-weight:600;color:var(--teal);
+  background:none;border:none;cursor:pointer;padding:2px 5px;
+  border-radius:5px;
+  transition:background var(--t);
+}
+.show-btn:hover{background:var(--teal2);}
+.col-body{padding:8px;display:flex;flex-direction:column;gap:7px;min-height:40px;}
+.col-body.hidden{display:none;}
+.empty{
+  padding:28px 12px;text-align:center;color:var(--hint);
+}
+.empty-ic{font-size:24px;margin-bottom:6px;}
+.empty-tx{font-size:12px;}
+
+/* ── CARD ── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:12px 12px 10px 14px;
+  cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:var(--sh);
+  transition:box-shadow var(--t),transform var(--t);
+}
+.card::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:3px;
+}
+.card.y::before{background:var(--y-dot);}
+.card.b::before{background:var(--b-dot);}
+.card.g::before{background:var(--g-dot);}
+.card.r::before{background:var(--r-dot);}
+.card:hover{box-shadow:var(--sh2);transform:translateY(-2px);}
+.card:active{transform:translateY(-1px);}
+
+.card-top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+  margin-bottom:8px;
+}
+.card-who{display:flex;align-items:center;gap:7px;}
+.av{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--teal2),#b2dce8);
+  display:grid;place-items:center;
+  font-size:12px;font-weight:700;color:var(--teal);
+}
+[data-dark] .av{color:#fff;}
+.av-name{font-size:13px;font-weight:700;line-height:1.15;}
+.av-dept{font-size:10px;color:var(--sub);}
+.dept-tag{
+  font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:20px;
+  background:var(--teal2);color:var(--teal);
+  white-space:nowrap;flex-shrink:0;
+}
+
+.items-list{margin-bottom:8px;display:flex;flex-direction:column;gap:3px;}
+.item-ln{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;padding:2px 0;
+}
+.idot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.iname{flex:1;color:var(--text);}
+.iqty{color:var(--sub);font-size:11px;white-space:nowrap;}
+.more-tx{font-size:11px;color:var(--hint);padding-left:10px;margin-top:1px;}
+
+.card-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:7px;border-top:1px solid var(--border);
+}
+.foot-date{font-size:10px;color:var(--hint);display:flex;align-items:center;gap:3px;}
+.foot-id{font-size:9px;color:var(--hint);font-family:monospace;}
+
+/* ── MODAL ── */
+.overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(8,12,22,.52);
+  display:none;place-items:center;
+  padding:16px;
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+}
+.overlay.open{display:grid;}
+.modal{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  width:100%;max-width:480px;
+  max-height:88vh;overflow-y:auto;
+  box-shadow:0 24px 64px rgba(0,0,0,.2);
+  animation:pop .22s cubic-bezier(.34,1.5,.64,1);
+}
+@keyframes pop{
+  from{opacity:0;transform:scale(.93) translateY(14px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+.m-hd{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:18px 18px 0;gap:10px;
+}
+.m-title{font-size:17px;font-weight:700;}
+.m-sub{font-size:11px;color:var(--sub);margin-top:3px;}
+.m-close{
+  width:30px;height:30px;border-radius:var(--r-sm);flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--sub);cursor:pointer;font-size:15px;
+  display:grid;place-items:center;
+  transition:background var(--t);
+}
+.m-close:hover{background:var(--r-bg);color:var(--r-text);}
+
+.m-body{padding:14px 18px 18px;}
+.info-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;
+}
+.info-box{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:9px 11px;
+}
+.info-lbl{font-size:10px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.info-val{font-size:13px;font-weight:600;}
+
+.sec-title{
+  font-size:10px;font-weight:700;color:var(--sub);
+  text-transform:uppercase;letter-spacing:.5px;
+  margin:14px 0 8px;
+}
+.item-row2{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+}
+.item-row2:last-child{border-bottom:none;}
+.i-num{
+  width:20px;height:20px;border-radius:5px;
+  background:var(--bg);color:var(--sub);
+  display:grid;place-items:center;
+  font-size:10px;font-weight:700;flex-shrink:0;
+}
+.i-info{flex:1;min-width:0;}
+.i-name{font-size:12px;font-weight:600;}
+.i-note{font-size:10px;color:var(--sub);}
+.i-qty{font-size:11px;color:var(--sub);white-space:nowrap;flex-shrink:0;}
+.i-sel{
+  padding:4px 7px;border-radius:var(--r-sm);font-size:11px;
+  border:1px solid var(--border);background:var(--bg);color:var(--text);
+  cursor:pointer;min-width:140px;
+  transition:border-color var(--t);
+}
+.i-sel:focus{border-color:var(--teal);outline:none;}
+
+.adm-field{margin-top:12px;}
+.adm-lbl{font-size:11px;font-weight:600;color:var(--sub);display:block;margin-bottom:4px;}
+.adm-inp{
+  width:100%;padding:8px 11px;
+  border:1px solid var(--border);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:13px;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.adm-inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,122,149,.1);}
+
+.m-ft{
+  display:flex;gap:8px;justify-content:flex-end;
+  padding:12px 18px;border-top:1px solid var(--border);
+  background:var(--bg);
+  border-radius:0 0 16px 16px;
+}
+.btn{
+  padding:9px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);
+  display:flex;align-items:center;gap:5px;
+  transition:background var(--t),transform var(--t);
+}
+.btn:hover{background:var(--border);}
+.btn:active{transform:scale(.97);}
+.btn-save{
+  background:linear-gradient(135deg,var(--teal),var(--navy));
+  color:#fff;border-color:transparent;
+  box-shadow:0 2px 8px rgba(31,122,149,.28);
+}
+.btn-save:hover{opacity:.9;}
+.btn-save:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:var(--surface);
+  padding:10px 18px;border-radius:24px;font-size:13px;font-weight:500;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
+  z-index:400;opacity:0;
+  transition:opacity .2s,transform .2s;
+  pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── LOADING ── */
+.ld{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:80px 20px;gap:12px;
+  color:var(--sub);font-size:13px;
+}
+.spin{
+  width:32px;height:32px;border-radius:50%;
+  border:3px solid var(--border);border-top-color:var(--teal);
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.err{text-align:center;padding:60px 20px;color:var(--r-text);font-size:13px;}
+
+/* ── MOBILE BOTTOM NAV ── */
+.bot-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:0 8px env(safe-area-inset-bottom);
+  z-index:150;box-shadow:0 -2px 10px rgba(0,0,0,.07);
+}
+.bot-nav-inner{display:flex;justify-content:space-around;}
+.bnav-a{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 12px;border-radius:var(--r-sm);
+  font-size:10px;font-weight:500;color:var(--sub);
+  cursor:pointer;transition:color var(--t);
+  text-decoration:none;
+}
+.bnav-a.on{color:var(--teal);}
+.bnav-ic{font-size:20px;line-height:1;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .board{grid-template-columns:1fr 1fr;}
+}
+
+@media(max-width:620px){
+  /* hide desktop nav, show mobile UI */
+  .desk-nav{display:none;}
+  .btn-order{display:none;}
+  .mob-tabs{display:block;}
+  .bot-nav{display:block;}
+  .upd{display:none;}
+
+  .board{
+    grid-template-columns:1fr;
+    padding:10px 12px 80px;
+    gap:0;
+  }
+  /* mobile: only show active column */
+  .col{display:none;border-radius:0;border-left:none;border-right:none;border-bottom:none;}
+  .col.active{display:block;}
+  .col.active:first-child{border-top:none;}
+
+  .strip-item{padding:8px 14px;min-width:90px;}
+  .strip-num{font-size:16px;}
+  .bar{padding:8px 12px;}
+  .hdr{padding:0 12px;}
+}
+
+@media(max-width:360px){
+  .brand-sub{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">BP</div>
+  <div class="brand">
+    <div class="brand-name">BeProud Clinic</div>
+    <div class="brand-sub">ระบบออเดอร์</div>
+  </div>
+  <!-- desktop nav -->
+  <nav class="desk-nav">
+    <a href="dashboard.html" class="nav-a on">📋 ออเดอร์</a>
+    <a href="my-orders.html" class="nav-a">👤 ของฉัน</a>
+    <a href="history.html"   class="nav-a">🗂 ประวัติ</a>
+    <a href="Stock_Check.html" class="btn-order">+ สั่งของ</a>
+  </nav>
+  <button class="icn-btn" id="themeBtn">🌙</button>
+  <button class="icn-btn" id="refreshBtn">↻</button>
+</header>
+
+<!-- SUMMARY STRIP -->
+<div class="strip">
+  <div class="strip-item" style="cursor:pointer" onclick="switchTab(0)">
+    <span class="strip-dot" style="background:var(--y-dot)"></span>
+    <div><div class="strip-num" id="cn0">—</div><div class="strip-lbl">รอดำเนินการ</div></div>
+  </div>
+  <div class="strip-item" style="cursor:pointer" onclick="switchTab(1)">
+    <span class="strip-dot" style="background:var(--b-dot)"></span>
+    <div><div class="strip-num" id="cn1">—</div><div class="strip-lbl">สั่งแล้ว รอของ</div></div>
+  </div>
+  <div class="strip-item" style="cursor:pointer" onclick="switchTab(2)">
+    <span class="strip-dot" style="background:var(--g-dot)"></span>
+    <div><div class="strip-num" id="cn2">—</div><div class="strip-lbl">ของมาแล้ว</div></div>
+  </div>
+  <div class="strip-item" style="border-right:none">
+    <span class="strip-dot" style="background:var(--r-dot)"></span>
+    <div><div class="strip-num" id="cn3">—</div><div class="strip-lbl">ยกเลิก</div></div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="bar">
+  <div class="srch">
+    <span class="srch-ic">🔍</span>
+    <input type="text" id="si" placeholder="ค้นหาชื่อ หรือสินค้า…">
+  </div>
+  <select class="flt" id="df">
+    <option value="">ทุกแผนก</option>
+    <option>ธุรการ</option><option>ผู้ช่วย</option>
+    <option>แม่บ้าน</option><option>Marketing</option><option>อื่นๆ</option>
+  </select>
+  <span class="upd" id="upd"></span>
+</div>
+
+<!-- MOBILE TABS -->
+<div class="mob-tabs">
+  <div class="mob-tabs-inner">
+    <button class="tab-btn on" data-tab="0" onclick="switchTab(0)">🟡 รอดำเนินการ <span class="tab-pill" id="tp0">—</span></button>
+    <button class="tab-btn"    data-tab="1" onclick="switchTab(1)">🔵 สั่งแล้ว รอของ <span class="tab-pill" id="tp1">—</span></button>
+    <button class="tab-btn"    data-tab="2" onclick="switchTab(2)">✅ ของมาแล้ว <span class="tab-pill" id="tp2">—</span></button>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div id="boardWrap">
+  <div class="ld"><div class="spin"></div>กำลังโหลด…</div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="ov">
+  <div class="modal">
+    <div class="m-hd">
+      <div><div class="m-title" id="mt">รายละเอียด</div><div class="m-sub" id="ms"></div></div>
+      <button class="m-close" id="mc">✕</button>
+    </div>
+    <div class="m-body" id="mb"></div>
+    <div class="m-ft">
+      <button class="btn" id="mcan">ยกเลิก</button>
+      <button class="btn btn-save" id="msave">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bot-nav">
+  <div class="bot-nav-inner">
+    <a href="dashboard.html" class="bnav-a on"><span class="bnav-ic">📋</span>ออเดอร์</a>
+    <a href="my-orders.html" class="bnav-a"><span class="bnav-ic">👤</span>ของฉัน</a>
+    <a href="Stock_Check.html" class="bnav-a"><span class="bnav-ic">➕</span>สั่งของ</a>
+    <a href="history.html"   class="bnav-a"><span class="bnav-ic">🗂</span>ประวัติ</a>
+  </div>
+</nav>
+
+<script>
+const URL_ = 'https://script.google.com/macros/s/AKfycbwTvJBKmKC56TBodSnoweS-SoVtjLA0hBswziH6vpNSnWCAyMmHO1dgAVnvN84Yhod8/exec';
+const DOTS = {'🟡 รอดำเนินการ':'#f59e0b','🔵 สั่งแล้ว รอของ':'#3b82f6','✅ ของมาแล้ว':'#22c55e','❌ ยกเลิก':'#ef4444'};
+
+let data={waiting:[],ordered:[],done:[],cancelled:[]};
+let q='',dept='',showDone=false,curO=null,activeTab=0;
+let dark=localStorage.getItem('bp-dk')==='1';
+
+// theme
+function applyTheme(){
+  document.body.toggleAttribute('data-dark',dark);
+  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
+  localStorage.setItem('bp-dk',dark?'1':'0');
+}
+applyTheme();
+document.getElementById('themeBtn').onclick=()=>{dark=!dark;applyTheme();};
+
+// tab switching (mobile)
+function switchTab(n){
+  activeTab=n;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('on',i===n));
+  document.querySelectorAll('.col').forEach((c,i)=>c.classList.toggle('active',i===n));
+}
+
+// load
+async function load(){
+  document.getElementById('boardWrap').innerHTML='<div class="ld"><div class="spin"></div>กำลังโหลด…</div>';
+  try{
+    const p=new URLSearchParams({action:'getOrders'});
+    if(dept)p.set('dept',dept);
+    const r=await fetch(`${URL_}?${p}`);
+    const j=await r.json();
+    if(!j.success)throw new Error(j.data);
+    data=j.data;
+    updateCounts();
+    render();
+    document.getElementById('upd').textContent='อัปเดต '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    document.getElementById('boardWrap').innerHTML=
+      `<div class="err">⚠️ โหลดไม่ได้<br><small>${e.message}</small><br><br><button class="btn" onclick="load()" style="margin:0 auto">ลองใหม่</button></div>`;
+  }
+}
+
+function updateCounts(){
+  const w=(data.waiting||[]).length,o=(data.ordered||[]).length,
+        d=(data.done||[]).length,c=(data.cancelled||[]).length;
+  ['cn0','cn1','cn2','cn3'].forEach((id,i)=>{
+    document.getElementById(id).textContent=[w,o,d,c][i];
+  });
+  ['tp0','tp1','tp2'].forEach((id,i)=>{
+    document.getElementById(id).textContent=[w,o,d][i];
+  });
+}
+
+function filt(list){
+  if(!q)return list;
+  const lq=q.toLowerCase();
+  return list.filter(o=>
+    o.name.toLowerCase().includes(lq)||
+    o.dept.toLowerCase().includes(lq)||
+    o.items.some(i=>i.product.toLowerCase().includes(lq))
+  );
+}
+
+function render(){
+  const w=filt(data.waiting||[]),o=filt(data.ordered||[]),d=filt(data.done||[]);
+  document.getElementById('boardWrap').innerHTML=`
+    <div class="board">
+      ${col('y','รอดำเนินการ','#f59e0b',w,0)}
+      ${col('b','สั่งแล้ว รอของ','#3b82f6',o,1)}
+      ${colDone(d)}
+    </div>`;
+  document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>openM(c.dataset.id)));
+  document.getElementById('doneToggle')?.addEventListener('click',()=>{
+    showDone=!showDone;
+    document.getElementById('doneBody').classList.toggle('hidden',!showDone);
+    document.getElementById('doneToggle').textContent=showDone?'ซ่อน':'แสดง';
+  });
+  // apply active tab on mobile
+  document.querySelectorAll('.col').forEach((c,i)=>c.classList.toggle('active',i===activeTab));
+}
+
+function col(cls,lbl,color,orders,tabIdx){
+  return `<div class="col${tabIdx===activeTab?' active':''}" data-tab="${tabIdx}">
+    <div class="col-hd">
+      <span class="col-bar" style="background:${color}"></span>
+      <span class="col-lbl">${lbl}</span>
+      <span class="col-cnt">${orders.length}</span>
+    </div>
+    <div class="col-body">
+      ${orders.length===0
+        ?'<div class="empty"><div class="empty-ic">📭</div><div class="empty-tx">ไม่มีรายการ</div></div>'
+        :orders.map(o=>card(o,cls)).join('')}
+    </div>
+  </div>`;
+}
+
+function colDone(orders){
+  return `<div class="col${activeTab===2?' active':''}" data-tab="2">
+    <div class="col-hd">
+      <span class="col-bar" style="background:#22c55e"></span>
+      <span class="col-lbl">ของมาแล้ว</span>
+      <span class="col-cnt">${orders.length}</span>
+      <button class="show-btn" id="doneToggle">${showDone?'ซ่อน':'แสดง'}</button>
+    </div>
+    <div class="col-body ${showDone?'':'hidden'}" id="doneBody">
+      ${orders.length===0
+        ?'<div class="empty"><div class="empty-ic">✅</div><div class="empty-tx">ไม่มีรายการ</div></div>'
+        :orders.map(o=>card(o,'g')).join('')}
+    </div>
+  </div>`;
+}
+
+function card(o,cls){
+  const av=o.name.charAt(0);
+  const its=o.items.slice(0,3).map(i=>`
+    <div class="item-ln">
+      <span class="idot" style="background:${DOTS[i.status]||'#ccc'}"></span>
+      <span class="iname">${i.product}</span>
+      <span class="iqty">${i.qty} ${i.unit}</span>
+    </div>`).join('');
+  const more=o.items.length>3?`<div class="more-tx">+${o.items.length-3} รายการ</div>`:'';
+  return `<div class="card ${cls}" data-id="${o.orderId}">
+    <div class="card-top">
+      <div class="card-who">
+        <div class="av">${av}</div>
+        <div><div class="av-name">${o.name}</div><div class="av-dept">${o.dept}</div></div>
+      </div>
+      <span class="dept-tag">${o.dept}</span>
+    </div>
+    <div class="items-list">${its}${more}</div>
+    <div class="card-foot">
+      <span class="foot-date">📅 ${fmt(o.date)}</span>
+      <span class="foot-id">#${o.orderId.slice(-6)}</span>
+    </div>
+  </div>`;
+}
+
+// modal
+function openM(id){
+  const all=[...data.waiting||[],...data.ordered||[],...data.done||[],...data.cancelled||[]];
+  curO=all.find(o=>o.orderId===id);
+  if(!curO)return;
+  document.getElementById('mt').textContent=`ออเดอร์ #${curO.orderId.slice(-8)}`;
+  document.getElementById('ms').textContent=`${curO.name} · ${curO.dept} · ${fmt(curO.date)}`;
+  document.getElementById('mb').innerHTML=`
+    <div class="info-row">
+      <div class="info-box"><div class="info-lbl">ผู้สั่ง</div><div class="info-val">${curO.name}</div></div>
+      <div class="info-box"><div class="info-lbl">แผนก</div><div class="info-val">${curO.dept}</div></div>
+    </div>
+    <div class="sec-title">รายการสินค้า</div>
+    ${curO.items.map((it,i)=>`
+      <div class="item-row2">
+        <div class="i-num">${i+1}</div>
+        <div class="i-info">
+          <div class="i-name">${it.product}</div>
+          ${it.note?`<div class="i-note">${it.note}</div>`:''}
+        </div>
+        <div class="i-qty">${it.qty} ${it.unit}</div>
+        <select class="i-sel" data-idx="${i}">
+          ${['🟡 รอดำเนินการ','🔵 สั่งแล้ว รอของ','✅ ของมาแล้ว','❌ ยกเลิก']
+            .map(s=>`<option${s===it.status?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>`).join('')}
+    <div class="adm-field">
+      <label class="adm-lbl">ผู้อัปเดต (ชื่อ Admin)</label>
+      <input class="adm-inp" id="aname" placeholder="เช่น เกวลี (ออย)">
+    </div>`;
+  document.getElementById('ov').classList.add('open');
+}
+
+function closeM(){document.getElementById('ov').classList.remove('open');curO=null;}
+document.getElementById('mc').onclick=closeM;
+document.getElementById('mcan').onclick=closeM;
+document.getElementById('ov').onclick=e=>{if(e.target===document.getElementById('ov'))closeM();};
+
+document.getElementById('msave').onclick=async()=>{
+  if(!curO)return;
+  const btn=document.getElementById('msave');
+  const by=document.getElementById('aname').value.trim();
+  btn.disabled=true;btn.textContent='กำลังบันทึก…';
+  const sels=document.querySelectorAll('.i-sel');
+  let n=0;
+  try{
+    for(const s of sels){
+      const idx=+s.dataset.idx,st=s.value;
+      if(st===curO.items[idx].status)continue;
+      const r=await fetch(URL_,{method:'POST',body:JSON.stringify({action:'updateStatus',orderId:curO.orderId,itemIndex:idx,status:st,updatedBy:by})});
+      const j=await r.json();
+      if(!j.success)throw new Error(j.data);
+      n++;
+    }
+    toast(n?`✅ บันทึก ${n} รายการ`:'ℹ️ ไม่มีรายการที่เปลี่ยน');
+    closeM();await load();
+  }catch(e){toast('❌ บันทึกไม่สำเร็จ');}
+  finally{btn.disabled=false;btn.innerHTML='💾 บันทึก';}
+};
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function fmt(s){
+  if(!s)return'—';
+  try{
+    const d=s.includes('GMT')?new Date(s):(()=>{
+      const[dm]=s.split(' ');const[dd,mm,yy]=dm.split('/').map(Number);
+      return new Date(yy>2500?yy-543:yy,mm-1,dd);
+    })();
+    return d.toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+  }catch{return s.split(' ')[0];}
+}
+
+document.getElementById('si').addEventListener('input',e=>{q=e.target.value.trim();render();});
+document.getElementById('df').addEventListener('change',e=>{dept=e.target.value;load();});
+document.getElementById('refreshBtn').onclick=load;
+
+load();
+</script>
+</body>
+</html>
