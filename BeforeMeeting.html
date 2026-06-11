@@ -929,22 +929,22 @@ async function submitForm() {
   document.getElementById("loading").classList.add("show");
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
+    await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(data)
     });
 
+    // no-cors จะไม่ได้ response กลับมา แต่ถ้าไม่ throw error = ส่งถึงแล้ว
     document.getElementById("loading").classList.remove("show");
     showSuccessScreen(data);
 
   } catch (err) {
     document.getElementById("loading").classList.remove("show");
-    showSuccessScreen(data);
+    alert("ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้งครับ\n\nError: " + err.message);
   }
 }
-
 function showSuccessScreen(data) {
   document.getElementById("mainForm").style.display = "none";
   const ss = document.getElementById("success-screen");
