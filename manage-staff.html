@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BeProud — จัดการพนักงาน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#055367;--teal:#1F7A95;--teal2:#e6f4f8;--gold:#C2822B;
+  --bg:#f0f2f5;--surface:#fff;--border:#e4e8ed;
+  --text:#1a2030;--sub:#6b7585;--hint:#adb5c0;
+  --g-bg:#e8faf0;--g-dot:#22c55e;--g-text:#0d4f2a;
+  --r-bg:#fff0f0;--r-dot:#ef4444;--r-text:#7a1a1a;
+  --r:12px;--r-sm:8px;
+  --sh:0 1px 4px rgba(0,0,0,.07);--sh2:0 4px 16px rgba(0,0,0,.10);--t:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Sarabun',-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit;}
+button,select,input{font-family:inherit;font-size:inherit;}
+
+.hdr{
+  position:sticky;top:0;z-index:100;height:54px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
+  box-shadow:var(--sh);
+}
+.logo{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--navy),var(--teal));
+  display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px;
+}
+.brand-name{font-size:14px;font-weight:700;color:var(--navy);}
+.brand-sub{font-size:10px;color:var(--sub);}
+.hdr-right{margin-left:auto;}
+.nav-a{
+  padding:6px 10px;border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;color:var(--sub);
+  display:flex;align-items:center;gap:4px;white-space:nowrap;
+  transition:background var(--t),color var(--t);
+}
+.nav-a:hover{background:var(--bg);color:var(--text);}
+
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 32px;}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:16px;
+}
+.card-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* ADD FORM */
+.field{margin-bottom:12px;}
+.label{display:block;font-size:12px;font-weight:600;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.inp{
+  width:100%;padding:10px 12px;
+  border:1.5px solid var(--border);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:14px;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,122,149,.1);}
+.select-wrap{position:relative;}
+.select-wrap select{
+  width:100%;padding:10px 36px 10px 12px;
+  border:1.5px solid var(--border);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:14px;
+  outline:none;appearance:none;-webkit-appearance:none;
+  transition:border-color var(--t);
+}
+.select-wrap select:focus{border-color:var(--teal);}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none;}
+
+.btn-add{
+  width:100%;padding:11px;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--teal),var(--navy));
+  color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;
+  box-shadow:0 2px 8px rgba(31,122,149,.28);
+  transition:opacity var(--t),transform var(--t);
+}
+.btn-add:hover{opacity:.9;transform:translateY(-1px);}
+.btn-add:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+/* STAFF LIST */
+.staff-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.staff-row:last-child{border-bottom:none;}
+.staff-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--teal2),#b2dce8);
+  display:grid;place-items:center;
+  font-size:13px;font-weight:700;color:var(--teal);
+}
+.staff-info{flex:1;}
+.staff-name{font-size:14px;font-weight:600;}
+.staff-dept{font-size:11px;color:var(--sub);}
+.dept-tag{
+  font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;
+  background:var(--teal2);color:var(--teal);white-space:nowrap;
+}
+.btn-remove{
+  padding:5px 10px;border-radius:var(--r-sm);
+  background:var(--r-bg);color:var(--r-text);border:1px solid var(--r-dot);
+  font-size:11px;font-weight:600;cursor:pointer;
+  transition:background var(--t);white-space:nowrap;
+}
+.btn-remove:hover{background:var(--r-dot);color:#fff;}
+
+.ld{display:flex;align-items:center;gap:8px;padding:16px 0;color:var(--sub);font-size:13px;}
+.spin{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--teal);animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:var(--surface);
+  padding:10px 18px;border-radius:24px;font-size:13px;font-weight:500;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
+  z-index:400;opacity:0;transition:opacity .2s,transform .2s;
+  pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* confirm modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;z-index:300;padding:16px;backdrop-filter:blur(4px);}
+.overlay.open{display:grid;}
+.modal{background:var(--surface);border-radius:var(--r);padding:24px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+.modal-desc{font-size:13px;color:var(--sub);margin-bottom:20px;}
+.modal-btns{display:flex;gap:8px;}
+.mbtn{flex:1;padding:10px;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);}
+.mbtn-danger{background:var(--r-dot);color:#fff;border-color:var(--r-dot);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">BP</div>
+  <div>
+    <div class="brand-name">BeProud Clinic</div>
+    <div class="brand-sub">จัดการพนักงาน</div>
+  </div>
+  <div class="hdr-right">
+    <a href="dashboard.html" class="nav-a">← กลับ Dashboard</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ADD -->
+  <div class="card">
+    <div class="card-title">➕ เพิ่มพนักงานใหม่</div>
+    <div class="field">
+      <label class="label">ชื่อพนักงาน</label>
+      <input class="inp" id="newName" placeholder="เช่น สมใจ (จอย)">
+    </div>
+    <div class="field">
+      <label class="label">แผนก</label>
+      <div class="select-wrap">
+        <select id="newDept">
+          <option value="">— เลือกแผนก —</option>
+          <option>ธุรการ</option>
+          <option>ผู้ช่วย</option>
+          <option>แม่บ้าน</option>
+          <option>Marketing</option>
+          <option>Online Admin</option>
+          <option>Content</option>
+          <option>Graphic</option>
+          <option>อื่นๆ</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-add" id="addBtn" onclick="addStaff()">เพิ่มพนักงาน</button>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    <div class="card-title">👥 พนักงานปัจจุบัน</div>
+    <div id="staffList"><div class="ld"><div class="spin"></div>กำลังโหลด…</div></div>
+  </div>
+
+</div>
+
+<!-- Confirm modal -->
+<div class="overlay" id="ov">
+  <div class="modal">
+    <div class="modal-title">⚠️ ยืนยันการลบ</div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-btns">
+      <button class="mbtn" onclick="closeModal()">ยกเลิก</button>
+      <button class="mbtn mbtn-danger" id="confirmRemove">ลบออก</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const URL_ = 'https://script.google.com/macros/s/AKfycbwTvJBKmKC56TBodSnoweS-SoVtjLA0hBswziH6vpNSnWCAyMmHO1dgAVnvN84Yhod8/exec';
+let staff = [];
+let pendingRemove = '';
+
+async function loadStaff() {
+  document.getElementById('staffList').innerHTML = '<div class="ld"><div class="spin"></div>กำลังโหลด…</div>';
+  try {
+    const r = await fetch(`${URL_}?action=getNames`);
+    const j = await r.json();
+    staff = j.data.staff || [];
+    renderList();
+  } catch {
+    document.getElementById('staffList').innerHTML = '<div style="color:var(--r-text);font-size:13px">โหลดไม่ได้ กรุณา refresh</div>';
+  }
+}
+
+function renderList() {
+  if (!staff.length) {
+    document.getElementById('staffList').innerHTML = '<div style="color:var(--hint);font-size:13px;text-align:center;padding:16px">ไม่มีพนักงาน</div>';
+    return;
+  }
+  document.getElementById('staffList').innerHTML = staff.map(s => `
+    <div class="staff-row">
+      <div class="staff-av">${s.name.charAt(0)}</div>
+      <div class="staff-info">
+        <div class="staff-name">${s.name}</div>
+        <div class="staff-dept">${s.dept}</div>
+      </div>
+      <span class="dept-tag">${s.dept}</span>
+      <button class="btn-remove" onclick="askRemove('${s.name}')">ลบออก</button>
+    </div>`).join('');
+}
+
+async function addStaff() {
+  const name = document.getElementById('newName').value.trim();
+  const dept = document.getElementById('newDept').value;
+  if (!name || !dept) { toast('กรุณาใส่ชื่อและเลือกแผนกด้วยนะคะ'); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true; btn.textContent = 'กำลังเพิ่ม…';
+  try {
+    const r = await fetch(URL_, { method:'POST', body: JSON.stringify({ action:'addEmployee', name, dept }) });
+    const j = await r.json();
+    if (!j.success) { toast('⚠️ ' + (j.data?.message || 'เพิ่มไม่สำเร็จ')); return; }
+    toast(`✅ เพิ่ม ${name} เรียบร้อยแล้ว`);
+    document.getElementById('newName').value = '';
+    document.getElementById('newDept').value = '';
+    await loadStaff();
+  } catch { toast('❌ เกิดข้อผิดพลาด'); }
+  finally { btn.disabled = false; btn.textContent = 'เพิ่มพนักงาน'; }
+}
+
+function askRemove(name) {
+  pendingRemove = name;
+  document.getElementById('modalDesc').textContent = `ต้องการลบ "${name}" ออกจากระบบใช่ไหมคะ? ออเดอร์เดิมจะยังคงอยู่นะคะ`;
+  document.getElementById('ov').classList.add('open');
+  document.getElementById('confirmRemove').onclick = doRemove;
+}
+
+function closeModal() { document.getElementById('ov').classList.remove('open'); }
+
+async function doRemove() {
+  closeModal();
+  try {
+    const r = await fetch(URL_, { method:'POST', body: JSON.stringify({ action:'removeEmployee', name: pendingRemove }) });
+    const j = await r.json();
+    if (!j.success) { toast('⚠️ ' + (j.data?.message || 'ลบไม่สำเร็จ')); return; }
+    toast(`✅ ลบ ${pendingRemove} ออกแล้ว`);
+    await loadStaff();
+  } catch { toast('❌ เกิดข้อผิดพลาด'); }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.getElementById('ov').onclick = e => { if (e.target === document.getElementById('ov')) closeModal(); };
+
+loadStaff();
+</script>
+</body>
+</html>
