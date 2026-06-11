@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>บีพราวด์ คลินิก — สั่งของ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#055367;--teal:#1F7A95;--teal2:#e6f4f8;--gold:#C2822B;
+  --bg:#f0f2f5;--surface:#fff;--border:#e4e8ed;--border2:#d0d7e0;
+  --text:#1a2030;--sub:#6b7585;--hint:#adb5c0;
+  --g-dot:#22c55e;--g-bg:#e8faf0;--g-text:#0d4f2a;
+  --r-dot:#ef4444;--r-bg:#fff0f0;--r-text:#7a1a1a;
+  --r:12px;--r-sm:8px;
+  --sh:0 1px 4px rgba(0,0,0,.07);--sh2:0 6px 20px rgba(0,0,0,.10);--t:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Sarabun',-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit;}
+button,select,input{font-family:inherit;font-size:inherit;}
+
+/* HEADER */
+.hdr{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 16px;height:54px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:var(--sh);position:sticky;top:0;z-index:100;
+}
+.logo{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--navy),var(--teal));
+  display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px;
+  box-shadow:0 2px 6px rgba(5,83,103,.25);
+}
+.brand{flex:1;}
+.brand-name{font-size:14px;font-weight:700;color:var(--navy);}
+.brand-sub{font-size:10px;color:var(--sub);}
+.hdr-nav{display:flex;gap:4px;}
+.nav-a{
+  padding:6px 10px;border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;color:var(--sub);
+  display:flex;align-items:center;gap:4px;white-space:nowrap;
+  transition:background var(--t),color var(--t);
+}
+.nav-a:hover{background:var(--bg);color:var(--text);}
+.nav-a.on{background:var(--teal2);color:var(--teal);}
+
+/* MAIN */
+.wrap{max-width:540px;margin:0 auto;padding:16px 16px 100px;}
+
+/* SECTION LABEL */
+.sec-label{
+  font-size:11px;font-weight:700;color:var(--sub);
+  text-transform:uppercase;letter-spacing:.6px;
+  margin:0 0 8px;display:flex;align-items:center;gap:6px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* CARD */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:12px;
+}
+
+/* STAFF PICKER */
+.staff-picker{
+  display:flex;align-items:center;gap:10px;
+}
+.staff-av{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--teal2),#b2dce8);
+  display:grid;place-items:center;
+  font-size:16px;font-weight:700;color:var(--teal);
+  transition:background var(--t);
+}
+.staff-av.sel{background:linear-gradient(135deg,var(--teal),var(--navy));color:#fff;}
+.staff-info{flex:1;}
+.select-wrap{position:relative;}
+.select-wrap select{
+  width:100%;padding:9px 32px 9px 12px;
+  border:1.5px solid var(--border2);border-radius:var(--r-sm);
+  background:var(--bg);color:var(--text);font-size:14px;
+  outline:none;appearance:none;-webkit-appearance:none;font-family:inherit;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.select-wrap select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,122,149,.1);}
+.select-wrap::after{
+  content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  color:var(--sub);pointer-events:none;font-size:13px;
+}
+.dept-chip{
+  font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;
+  background:var(--teal2);color:var(--teal);margin-top:4px;display:inline-block;
+}
+
+/* ITEMS */
+.items-wrap{display:flex;flex-direction:column;gap:8px;}
+.item-card{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:12px;position:relative;
+}
+.item-card-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.item-num{font-size:11px;font-weight:700;color:var(--teal);}
+.del-btn{
+  width:22px;height:22px;border-radius:6px;
+  background:var(--border);border:none;cursor:pointer;
+  color:var(--sub);font-size:12px;display:grid;place-items:center;
+  transition:background var(--t),color var(--t);
+}
+.del-btn:hover{background:var(--r-dot);color:#fff;}
+
+.item-row{display:grid;grid-template-columns:1fr 70px 80px;gap:8px;margin-bottom:8px;}
+.field-label{font-size:10px;font-weight:600;color:var(--sub);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+.inp{
+  width:100%;padding:8px 10px;
+  border:1.5px solid var(--border2);border-radius:var(--r-sm);
+  background:var(--surface);color:var(--text);font-size:13px;outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.inp:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(31,122,149,.1);}
+.inp::placeholder{color:var(--hint);}
+.inp-note{font-size:12px;padding:7px 10px;}
+
+.add-btn{
+  width:100%;padding:10px;border-radius:var(--r-sm);
+  background:var(--teal2);color:var(--teal);
+  border:1.5px dashed var(--teal);font-size:13px;font-weight:600;
+  cursor:pointer;transition:background var(--t);margin-top:4px;
+}
+.add-btn:hover{background:#d0eaf3;}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:14px;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--teal),var(--navy));
+  color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;
+  box-shadow:0 3px 10px rgba(31,122,149,.32);
+  transition:opacity var(--t),transform var(--t);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:4px;
+}
+.submit-btn:hover{opacity:.92;transform:translateY(-1px);}
+.submit-btn:active{transform:translateY(0);}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+/* SAVING OVERLAY */
+.saving-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:none;place-items:center;z-index:300;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.saving-ov.show{display:grid;}
+.saving-box{
+  background:var(--surface);border-radius:var(--r);
+  padding:28px 32px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  animation:pop .2s ease;
+}
+@keyframes pop{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+.spin{width:36px;height:36px;border-radius:50%;margin:0 auto 12px;border:3px solid var(--border);border-top-color:var(--teal);animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* SUCCESS */
+.success-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:32px 20px;text-align:center;box-shadow:var(--sh);
+}
+.success-ic{font-size:56px;margin-bottom:12px;}
+.success-title{font-size:20px;font-weight:700;color:var(--g-dot);margin-bottom:6px;}
+.success-sub{font-size:13px;color:var(--sub);margin-bottom:20px;}
+.order-id-chip{
+  display:inline-block;
+  background:var(--teal2);border:1px solid var(--teal);
+  border-radius:var(--r-sm);padding:8px 16px;
+  font-size:12px;color:var(--teal);font-family:monospace;font-weight:600;
+  margin-bottom:20px;
+}
+.btn-new{
+  padding:12px 28px;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--teal),var(--navy));
+  color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;
+  box-shadow:0 2px 8px rgba(31,122,149,.28);
+  transition:opacity var(--t),transform var(--t);
+}
+.btn-new:hover{opacity:.9;transform:translateY(-1px);}
+
+/* BOTTOM NAV */
+.bot-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:0 8px env(safe-area-inset-bottom);
+  z-index:150;box-shadow:0 -2px 10px rgba(0,0,0,.07);
+}
+.bot-nav-inner{display:flex;justify-content:space-around;}
+.bnav-a{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 12px;font-size:10px;font-weight:500;color:var(--sub);
+  text-decoration:none;
+}
+.bnav-a.on{color:var(--teal);}
+.bnav-ic{font-size:20px;line-height:1;}
+
+/* loading state */
+.staff-ld{padding:9px 12px;font-size:13px;color:var(--hint);background:var(--bg);border-radius:var(--r-sm);border:1.5px solid var(--border2);}
+
+@media(min-width:621px){.bot-nav{display:none;}.wrap{padding-bottom:32px;}}
+@media(max-width:420px){.item-row{grid-template-columns:1fr 60px 70px;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">BP</div>
+  <div class="brand">
+    <div class="brand-name">บีพราวด์ คลินิก</div>
+    <div class="brand-sub">ระบบสั่งของภายใน</div>
+  </div>
+  <nav class="hdr-nav">
+    <a href="dashboard.html" class="nav-a">📋 ออเดอร์</a>
+    <a href="my-orders.html" class="nav-a">👤 ของฉัน</a>
+    <a href="Stock_Check.html" class="nav-a on">➕ สั่งของ</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- ── FORM ── -->
+  <div id="formView">
+
+    <!-- ผู้สั่ง -->
+    <div class="sec-label">👤 ผู้สั่ง</div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="staff-picker">
+        <div class="staff-av" id="staffAv">?</div>
+        <div class="staff-info">
+          <div id="nameWrap">
+            <div class="staff-ld" id="nameLoading">⏳ กำลังโหลดรายชื่อ…</div>
+          </div>
+          <div id="deptChip" style="display:none" class="dept-chip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- รายการ -->
+    <div class="sec-label">📦 รายการสั่งของ</div>
+    <div class="card">
+      <div class="items-wrap" id="itemsWrap"></div>
+      <button class="add-btn" id="addBtn">➕ เพิ่มรายการ</button>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled>
+      ✅ ยืนยันส่งคำสั่งซื้อ
+    </button>
+
+  </div>
+
+  <!-- ── SUCCESS ── -->
+  <div id="successView" style="display:none">
+    <div class="success-card">
+      <div class="success-ic">🎉</div>
+      <div class="success-title">ส่งคำสั่งซื้อแล้ว!</div>
+      <div class="success-sub">บันทึกเรียบร้อยแล้วค่ะ<br>Bot แจ้งเตือนเข้ากลุ่ม LINE แล้ว 🎉</div>
+      <div class="order-id-chip" id="successId"></div>
+      <br>
+      <button class="btn-new" onclick="resetForm()">📦 สั่งของรอบใหม่</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Saving overlay -->
+<div class="saving-ov" id="savingOv">
+  <div class="saving-box">
+    <div class="spin"></div>
+    <div style="font-size:14px;font-weight:600">กำลังบันทึก…</div>
+    <div style="font-size:12px;color:var(--sub);margin-top:4px">กรุณารอสักครู่นะคะ</div>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="bot-nav">
+  <div class="bot-nav-inner">
+    <a href="dashboard.html" class="bnav-a"><span class="bnav-ic">📋</span>ออเดอร์</a>
+    <a href="my-orders.html" class="bnav-a"><span class="bnav-ic">👤</span>ของฉัน</a>
+    <a href="Stock_Check.html" class="bnav-a on"><span class="bnav-ic">➕</span>สั่งของ</a>
+    <a href="history.html"   class="bnav-a"><span class="bnav-ic">🗂</span>ประวัติ</a>
+  </div>
+</nav>
+
+<script>
+const URL_ = 'https://script.google.com/macros/s/AKfycbwTvJBKmKC56TBodSnoweS-SoVtjLA0hBswziH6vpNSnWCAyMmHO1dgAVnvN84Yhod8/exec';
+
+let staff   = [];
+let selName = '';
+let selDept = '';
+let items   = [newItem()];
+
+function newItem(){ return { product:'', qty:'', unit:'', note:'' }; }
+
+// ── Load staff ────────────────────────────────────────
+async function loadStaff() {
+  try {
+    const r = await fetch(`${URL_}?action=getNames`);
+    const j = await r.json();
+    if (!j.success) throw new Error();
+    staff = j.data.staff || [];
+    renderNameSelect();
+  } catch {
+    // fallback: text input
+    document.getElementById('nameWrap').innerHTML =
+      `<input class="inp" id="nameInp" placeholder="พิมพ์ชื่อของคุณ…" oninput="onNameInput(this.value)">`;
+  }
+}
+
+function renderNameSelect() {
+  document.getElementById('nameWrap').innerHTML = `
+    <div class="select-wrap">
+      <select id="nameSel" onchange="onNameChange(this.value)">
+        <option value="">— เลือกชื่อของคุณ —</option>
+        ${staff.map(s=>`<option value="${s.name}">${s.name}</option>`).join('')}
+      </select>
+    </div>`;
+}
+
+function onNameChange(name) {
+  selName = name;
+  const found = staff.find(s => s.name === name);
+  selDept = found ? found.dept : '';
+  updatePersonUI();
+  checkSubmit();
+}
+
+function onNameInput(val) {
+  selName = val.trim();
+  selDept = '';
+  updatePersonUI();
+  checkSubmit();
+}
+
+function updatePersonUI() {
+  const av   = document.getElementById('staffAv');
+  const chip = document.getElementById('deptChip');
+  if (selName) {
+    av.textContent = selName.charAt(0);
+    av.classList.add('sel');
+    if (selDept) {
+      chip.textContent = selDept;
+      chip.style.display = 'inline-block';
+    } else {
+      chip.style.display = 'none';
+    }
+  } else {
+    av.textContent = '?';
+    av.classList.remove('sel');
+    chip.style.display = 'none';
+  }
+}
+
+// ── Items ─────────────────────────────────────────────
+function renderItems() {
+  document.getElementById('itemsWrap').innerHTML = items.map((it, i) => `
+    <div class="item-card" id="item-${i}">
+      <div class="item-card-hd">
+        <span class="item-num">รายการที่ ${i+1}</span>
+        ${items.length > 1
+          ? `<button class="del-btn" onclick="removeItem(${i})" title="ลบรายการนี้">✕</button>`
+          : ''}
+      </div>
+      <div class="item-row">
+        <div>
+          <div class="field-label">ชื่อสินค้า *</div>
+          <input class="inp" placeholder="เช่น ถุงมือ, ไหม, น้ำเกลือ…"
+            value="${it.product}"
+            oninput="items[${i}].product=this.value;checkSubmit()">
+        </div>
+        <div>
+          <div class="field-label">จำนวน *</div>
+          <input class="inp" type="number" min="1" placeholder="0"
+            value="${it.qty}"
+            oninput="items[${i}].qty=this.value;checkSubmit()">
+        </div>
+        <div>
+          <div class="field-label">หน่วย *</div>
+          <input class="inp" placeholder="กล่อง…"
+            value="${it.unit}"
+            oninput="items[${i}].unit=this.value;checkSubmit()">
+        </div>
+      </div>
+      <div>
+        <div class="field-label">หมายเหตุ (ถ้ามี)</div>
+        <input class="inp inp-note" placeholder="เช่น ไซส์ M, สีขาว, spec เพิ่มเติม…"
+          value="${it.note}"
+          oninput="items[${i}].note=this.value">
+      </div>
+    </div>`).join('');
+}
+
+function addItem() {
+  items.push(newItem());
+  renderItems();
+  checkSubmit();
+  setTimeout(() => {
+    document.getElementById(`item-${items.length-1}`)
+      ?.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 80);
+}
+
+function removeItem(i) {
+  items.splice(i, 1);
+  renderItems();
+  checkSubmit();
+}
+
+function checkSubmit() {
+  const ok = selName &&
+    items.length > 0 &&
+    items.every(it => it.product.trim() && it.qty && it.unit.trim());
+  document.getElementById('submitBtn').disabled = !ok;
+}
+
+// ── Submit ────────────────────────────────────────────
+document.getElementById('submitBtn').onclick = async () => {
+  document.getElementById('savingOv').classList.add('show');
+  try {
+    const now = new Date().toLocaleString('th-TH',{
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+    const r = await fetch(URL_, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'addOrder',
+        name:   selName,
+        dept:   selDept,
+        date:   now,
+        items:  items.map(it => ({
+          product: it.product.trim(),
+          qty:     it.qty,
+          unit:    it.unit.trim(),
+          note:    it.note.trim(),
+        })),
+      }),
+    });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.data);
+
+    document.getElementById('successId').textContent = `🔖 ${j.data.orderId}`;
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('successView').style.display = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด: ' + e.message);
+  } finally {
+    document.getElementById('savingOv').classList.remove('show');
+  }
+};
+
+document.getElementById('addBtn').onclick = addItem;
+
+function resetForm() {
+  items   = [newItem()];
+  selName = '';
+  selDept = '';
+  renderItems();
+  renderNameSelect();
+  updatePersonUI();
+  checkSubmit();
+  document.getElementById('formView').style.display = '';
+  document.getElementById('successView').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Init ──────────────────────────────────────────────
+renderItems();
+loadStaff();
+</script>
+</body>
+</html>
