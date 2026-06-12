@@ -398,11 +398,19 @@ function doSearch() {
     // dept filter
     if (dept && o.dept !== dept) return false;
     // date range
-    if (from || to) {
+       if (from || to) {
       const d = parseDate(o.date);
       if (!d) return true;
-      if (from && d < new Date(from)) return false;
-      if (to   && d > new Date(to + 'T23:59:59')) return false;
+      if (from) {
+        const fp = from.split('-');
+        const fromD = new Date(+fp[0], +fp[1]-1, +fp[2]);
+        if (d < fromD) return false;
+      }
+      if (to) {
+        const tp = to.split('-');
+        const toD = new Date(+tp[0], +tp[1]-1, +tp[2], 23, 59, 59);
+        if (d > toD) return false;
+      }
     }
     return true;
   });
